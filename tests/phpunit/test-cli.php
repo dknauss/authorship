@@ -611,6 +611,68 @@ class TestCLI extends TestCase {
 		}
 	}
 
+	public function testPpaMigrationIgnoresStaleLinkedUserMetaAndFallsBackToLogin() : void {
+		$factory = self::factory()->post;
+		$author_taxonomy_preexisting = taxonomy_exists( 'author' );
+		$term_id = 0;
+
+		if ( ! $author_taxonomy_preexisting ) {
+			register_taxonomy(
+				'author',
+				'post',
+				[
+					'public'    => false,
+					'query_var' => false,
+					'rewrite'   => false,
+				]
+			);
+		}
+
+		$existing_user = self::factory()->user->create_and_get( [
+			'role'          => 'author',
+			'user_login'    => 'ppa-stale-linked-user',
+			'user_nicename' => 'stale-linked-user-profile',
+			'display_name'  => 'Stale Linked User Fallback',
+			'user_email'    => 'ppa-stale-linked-user@example.org',
+		] );
+
+		try {
+			$post = $factory->create_and_get( [
+				'post_author' => self::$users['editor']->ID,
+			] );
+
+			$term = wp_insert_term( 'PPA Stale Linked User', 'author', [
+				'slug' => 'ppa-stale-linked-user',
+			] );
+			$this->assertIsArray( $term );
+			$this->assertArrayHasKey( 'term_id', $term );
+
+			$term_id = (int) $term['term_id'];
+			wp_set_object_terms( $post->ID, [ $term_id ], 'author' );
+			update_term_meta( $term_id, 'user_id', 999999 );
+
+			$command = new CLI\Migrate_Command();
+			$command->ppa( [], [
+				'dry-run' => false,
+				'overwrite-authors' => true,
+				'batch-pause' => '0',
+			] );
+
+			$authorship_authors = \Authorship\get_authors( $post );
+
+			$this->assertCount( 1, $authorship_authors );
+			$this->assertSame( $existing_user->ID, $authorship_authors[0]->ID );
+		} finally {
+			if ( $term_id > 0 && taxonomy_exists( 'author' ) ) {
+				wp_delete_term( $term_id, 'author' );
+			}
+
+			if ( ! $author_taxonomy_preexisting && taxonomy_exists( 'author' ) ) {
+				unregister_taxonomy( 'author' );
+			}
+		}
+	}
+
 	public function testMigratePauseResolutionActionFiresPerProcessedBatch() : void {
 		$factory = self::factory()->post;
 

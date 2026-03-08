@@ -68,6 +68,17 @@ Harden PublishPress migration so stale linked-user metadata is validated and saf
 Planned on 2026-03-08.
 
 Execution state:
-- Explicit Build-04 execution not started.
-- Groundwork commit `380ba2c` already changed `get_ppa_user_id()` to prefer login-first, slug-second fallback; this build remains responsible for stale linked-user validation and gate re-verification.
+- Executed on `codex/phase-04-build-04-ppa-linked-user-hardening`.
+- Added stale linked-user regression coverage:
+  - `testPpaMigrationIgnoresStaleLinkedUserMetaAndFallsBackToLogin`
+- Validated linked-user metadata in `get_ppa_user_id()` before reuse:
+  - only existing mapped users are reused
+  - stale/nonexistent mapped IDs now fall through to login/slug resolution (then create-user path as last resort)
+- Re-verified gate suite:
+  - `composer test:integration`
+  - `WP_MULTISITE=1 composer test:integration`
+  - `composer analyse:phpstan`
+  - `composer analyse:psalm`
+  - `composer lint`
+- Next slice is `04-Build-05` (implicit author-query post-type semantics).
 </status>

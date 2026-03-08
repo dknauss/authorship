@@ -34,13 +34,16 @@ See also: [Global Roadmap](roadmap-global.md) for project-wide purpose, history,
     - fixed write-mode `wp-authors` skip bug with deterministic snapshot-ID batching
     - added multi-batch regression coverage for full pending migration and mixed existing-authorship fixtures
     - re-verified `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
-  - `04-Build-04` through `04-Build-07` remain queued for blocker remediation:
-    - stale PPA linked-user hardening
+  - `04-Build-04` executed on `codex/phase-04-build-04-ppa-linked-user-hardening`:
+    - added stale linked-user regression for nonexistent PublishPress mapped user IDs
+    - validated mapped linked-user IDs before reuse and preserved login/slug fallback behavior
+    - re-verified `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
+  - `04-Build-05` through `04-Build-07` remain queued for blocker remediation:
     - implicit author-query post-type semantics
     - author-query callback lifecycle cleanup
     - user-deletion authorship sync verification and coverage hardening
-  - Next explicit execution slice is `04-Build-04`
-  - Phase 04 execution priority is `04-Build-04` through `04-Build-07`, then `04-Build-01` and `04-Build-02`
+  - Next explicit execution slice is `04-Build-05`
+  - Phase 04 execution priority is `04-Build-05` through `04-Build-07`, then `04-Build-01` and `04-Build-02`
   - Further Phase 04 work should continue only through explicit build-scoped branches/PRs
 - Strict fork-first upstream policy centralized at `docs/fork-first-policy.md`.
 - Upstream PR hygiene completed on 2026-03-08: superseded HM PRs `#160`, `#161`, and `#167`-`#172` closed; maintained open packaging set is `#162`-`#165`.
@@ -88,6 +91,6 @@ Residual risk notes:
 - Coverage ratchet is intentionally conservative at 63% pending Phase 04 incremental raises.
 
 ## Next step
-- Continue Phase 04 only through explicit build-scoped branches/PRs; `04-Build-04` is the next slice.
-- Blocker-remediation lane is `04-Build-04` through `04-Build-07`; keep `04-Build-01` and `04-Build-02` queued behind it.
+- Continue Phase 04 only through explicit build-scoped branches/PRs; `04-Build-05` is the next slice.
+- Blocker-remediation lane is `04-Build-05` through `04-Build-07`; keep `04-Build-01` and `04-Build-02` queued behind it.
 - Keep NVDA transcript capture in backlog as optional `UI-06` evidence work (non-blocking).

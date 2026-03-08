@@ -417,10 +417,12 @@ class Migrate_Command extends WP_CLI_Command {
 		 */
 		$ppa_user_id = get_term_meta( $ppa_author->term_id, 'user_id', true );
 
-		// If there is no mapped PPA user then resolve that.
-		if ( ! empty( $ppa_user_id ) ) {
-			if ( is_scalar( $ppa_user_id ) ) {
-				return (int) $ppa_user_id;
+		// Reuse mapped linked users only when the referenced user still exists.
+		if ( ! empty( $ppa_user_id ) && is_scalar( $ppa_user_id ) ) {
+			$mapped_user_id = (int) $ppa_user_id;
+
+			if ( $mapped_user_id > 0 && get_userdata( $mapped_user_id ) ) {
+				return $mapped_user_id;
 			}
 		}
 
