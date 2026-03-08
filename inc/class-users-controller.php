@@ -139,7 +139,24 @@ class Users_Controller extends WP_REST_Users_Controller {
 	 */
 	function filter_rest_user_query( array $prepared_args, \WP_REST_Request $request ) : array {
 		unset( $prepared_args['has_published_posts'] );
-		$prepared_args['blog_id'] = 0;
+
+		/**
+		 * Filters Authorship cross-site attribution mode for user queries.
+		 *
+		 * Returning `network` enables network-wide user queries (`blog_id=0`).
+		 * Any other value keeps query scope local to the current site.
+		 *
+		 * @param string $mode Attribution mode. Default `site`.
+		 */
+		unset( $request );
+
+		$mode = strtolower( (string) apply_filters( 'authorship_cross_site_mode', 'site' ) );
+
+		if ( 'network' === $mode ) {
+			$prepared_args['blog_id'] = 0;
+		} else {
+			$prepared_args['blog_id'] = get_current_blog_id();
+		}
 
 		return $prepared_args;
 	}

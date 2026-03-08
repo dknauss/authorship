@@ -36,6 +36,11 @@ See also: [Global Roadmap](roadmap-global.md) for project-wide purpose, history,
     - implicit author-query post-type semantics
     - author-query callback lifecycle cleanup
     - user-deletion authorship sync verification and coverage hardening
+  - `04-Build-08` plan created and queued for attribution lifecycle observability hooks using `docs/audit/authorship-observability-hook-contract.md`
+  - Canonical execution board is `.planning/phases/04-test-depth-and-ratcheting-authorship/04-execution-board.md`
+  - Cross-site attribution contract for Phase 04 is REST-only and default site-local; explicit network mode remains filter-controlled (`authorship_cross_site_mode`)
+  - Widening cross-site mode beyond REST is tracked as backlog follow-up, not in current Phase 04 execution scope
+  - Security and audit model is complementary-plugin-first: WP Sudo handles reauthentication/gating and Stream/WSAL-style plugins handle persistent audit trails; Authorship focuses on emitting stable hooks
   - Next explicit execution slice is `04-Build-03`
   - Phase 04 execution priority is `04-Build-03` through `04-Build-07`, then `04-Build-01` and `04-Build-02`
   - Further Phase 04 work should continue only through explicit build-scoped branches/PRs
@@ -87,4 +92,7 @@ Residual risk notes:
 ## Next step
 - Continue Phase 04 only through explicit build-scoped branches/PRs; `04-Build-03` is the next slice.
 - Blocker-remediation lane is `04-Build-03` through `04-Build-07`; keep `04-Build-01` and `04-Build-02` queued behind it.
+- Keep `04-Build-08` queued as the next interoperability slice after blocker and quality lanes complete.
+- Keep explicit network mode scoped to REST in Phase 04; treat non-REST widening as backlog unless reprioritized.
+- Keep audit/reauth strategy integration-first: prioritize hook contract coverage for Stream/WSAL compatibility and avoid planning a first-party audit datastore in Authorship.
 - Keep NVDA transcript capture in backlog as optional `UI-06` evidence work (non-blocking).

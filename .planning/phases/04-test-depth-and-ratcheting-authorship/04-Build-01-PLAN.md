@@ -9,7 +9,9 @@ files_modified:
   - "tests/phpunit/test-post-saving.php"
   - "tests/phpunit/test-rest-api-post-property.php"
   - "tests/phpunit/test-rest-api-user-endpoint.php"
+  - "tests/phpunit/test-rest-api-user-endpoint-multisite.php"
   - "tests/phpunit/includes/testcase.php"
+  - "inc/class-users-controller.php"
   - "inc/namespace.php"
   - "docs/audit/roadmap-global.md"
   - "docs/audit/roadmap-01.md"
@@ -19,7 +21,8 @@ must_haves:
   truths:
     - "Build-01 expands test depth and coverage signal without introducing intentional runtime behavior changes."
     - "Hook/filter tests validate contract behavior, not private implementation details."
-    - "Cross-site attribution remains disabled by default and is enabled only via an explicit network mode control."
+    - "Cross-site attribution for REST user endpoint queries remains disabled by default and is enabled only via the explicit `authorship_cross_site_mode` filter."
+    - "Phase 04 keeps network mode REST-only; non-REST query-surface expansion is deferred to backlog."
   artifacts:
     - path: "tests/phpunit/test-multisite.php"
       provides: "Expanded multisite behavior regression coverage"
@@ -29,7 +32,7 @@ must_haves:
 ---
 
 <objective>
-Expand PHPUnit coverage for multisite and public hooks/filters to raise confidence in cross-site behavior and extension contracts while preserving explicit network-mode control for cross-site attribution.
+Expand PHPUnit coverage for multisite and public hooks/filters to raise confidence in extension contracts while preserving explicit REST-only network-mode control for cross-site user endpoint behavior.
 </objective>
 
 <tasks>
@@ -40,7 +43,7 @@ Expand PHPUnit coverage for multisite and public hooks/filters to raise confiden
   <action>
     - Catalog missing assertions for multisite author attribution and capability behavior.
     - Catalog missing tests for public filters such as `authorship_default_author` and `authorship_supported_post_types`.
-    - Catalog required contract points for explicit network-mode behavior (default-off, opt-in enablement path, and capability boundaries).
+    - Catalog required contract points for explicit network-mode behavior in REST user endpoint queries (default-off, opt-in enablement path, and capability boundaries).
   </action>
   <verify>Gap list is explicit and mapped to test files.</verify>
   <done>Coverage-gap map documented in implementation notes.</done>
@@ -50,9 +53,9 @@ Expand PHPUnit coverage for multisite and public hooks/filters to raise confiden
   <name>04-01-02 Add multisite behavior regression tests</name>
   <files>tests/phpunit/test-multisite.php, tests/phpunit/includes/testcase.php</files>
   <action>
-    - Add cross-site attribution read/write checks and role/capability-path assertions.
+    - Add cross-site REST user lookup/read checks and role/capability-path assertions.
     - Add coverage proving default behavior stays site-local unless explicit network mode is enabled.
-    - Add coverage proving explicit network mode enables cross-site attribution/search behavior when enabled.
+    - Add coverage proving explicit network mode enables cross-site include/search behavior in REST user lookups when enabled.
     - Add deterministic setup helpers needed for multisite fixtures.
   </action>
   <verify>`WP_MULTISITE=1 composer test:integration` passes with added multisite tests and explicit-mode default-off assertions.</verify>
@@ -89,4 +92,5 @@ Planned on 2026-03-08.
 Execution state:
 - Explicit Build-01 execution not started.
 - Groundwork commit `380ba2c` landed partial multisite/runtime changes inside this scope; remaining work is coverage expansion and gate re-verification.
+- Phase contract clarification: REST user endpoint network mode is filter-controlled and default-off; widening to non-REST query surfaces is future backlog.
 </status>

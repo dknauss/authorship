@@ -193,6 +193,29 @@ This endpoint allows:
 * Searching all users who can be attributed to content
 * Creating guest authors
 
+#### Multisite cross-site lookup mode (REST-only, opt-in)
+
+By default, user lookups for `authorship/v1/users` are scoped to the current site (`site` mode). In multisite, this keeps attribution search local unless you explicitly opt in.
+
+To enable network-wide user lookups for this endpoint, use the `authorship_cross_site_mode` filter and return `network`:
+
+```php
+add_filter(
+	'authorship_cross_site_mode',
+	static function ( $mode ) {
+		unset( $mode );
+		return 'network';
+	}
+);
+```
+
+Supported mode values:
+
+* `site` (default): current-site user lookup scope
+* `network`: network-wide lookup scope
+
+Current scope note: this mode applies to the REST user lookup surface (`authorship/v1/users`) and is not applied to non-REST query surfaces.
+
 ### `authorship` field
 
 This field is added to the endpoint for all supported post types (by default, ones which that have post type support for `author`), for example `wp/v2/posts`. This field is readable and writable and accepts and provides an array of IDs of users attributed to the post.
@@ -317,6 +340,8 @@ The `authorship/v1/users` REST API endpoint provides a means of searching users 
 
 In addition, this endpoint has been designed to expose minimal information about users, for example it does not expose email addresses or capabilities. This allows lower level users such as users with a role of Author to be granted the ability to attribute users to a post without unnecessarily exposing sensitive information about other users.
 
+In multisite, this lookup is site-local by default. A network-wide lookup mode is available only through the explicit `authorship_cross_site_mode` filter.
+
 ### Creating Guest Authors
 
 The `authorship/v1/users` REST API endpoint provides a means of creating guest authors that can subsequently be attributed to a post. Access to this endpoint is granted to all users who have the ability to edit others' posts, which means Editors and Administrators by default.
@@ -336,6 +361,19 @@ The following custom user capabilities are used by Authorship. These can be gran
 * `create_guest_authors`
    - Used when creating a guest author
    - Maps to `edit_others_posts` by default
+
+### Complementary Security and Audit Plugins
+
+Authorship does not aim to be a complete security or audit platform by itself.
+
+Recommended complementary approach:
+
+* Use **WP Sudo** to add reauthentication gates for sensitive operations in WordPress admin, AJAX, REST, and other request surfaces.
+* Use **Stream** or **WP Activity Log** (WSAL) for persistent audit trails and reporting.
+* Use Authorship hook/filter extension points for integration-specific logging behavior.
+* Use the observability hook contract spec in `docs/audit/authorship-observability-hook-contract.md` when implementing logging integrations.
+
+Current policy direction in this fork: keep Authorship focused on attribution behavior and interoperability hooks rather than introducing a first-party audit log datastore/dashboard.
 
 ## Contributing
 
