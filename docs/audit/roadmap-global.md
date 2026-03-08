@@ -216,7 +216,7 @@ Replace the deprecated and accessibility-impaired frontend stack with current Wo
   - captured automation evidence for selector label/instructions/live-region behavior in local editor
   - added Build-12 AT transcript ledger in `docs/manual-testing-checklist.md` and recorded manual VoiceOver add/remove/reorder pass
   - documented host automation blockers for spoken-output capture (VoiceOver keystroke automation permission boundary)
-  - residual follow-up: NVDA transcript row is still pending in the checklist ledger (non-blocking)
+  - residual follow-up: NVDA transcript row is still pending in the checklist ledger (non-blocking), tracked in fork issue `#11` (`https://github.com/dknauss/authorship/issues/11`)
 
 ### Scope
 
@@ -339,6 +339,6 @@ Items are ordered by impact and urgency. Phase assignments indicate when each it
 
 ## What happens next
 
-1. Capture the remaining host-native NVDA transcript row in `docs/manual-testing-checklist.md` as residual accessibility evidence follow-up.
+1. Capture the remaining host-native NVDA transcript row in `docs/manual-testing-checklist.md` as residual accessibility evidence follow-up (tracking issue: `https://github.com/dknauss/authorship/issues/11`).
 2. Keep open upstream PRs as optional adoption paths and post concise fork-status updates when execution state shifts.
 3. Keep `04-Build-01` and `04-Build-02` as planning-only queued items until explicit start instruction for Phase 04 execution.

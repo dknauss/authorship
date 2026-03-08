@@ -74,5 +74,5 @@ Residual risk notes:
 - Coverage ratchet is intentionally conservative at 63% pending Phase 04 incremental raises.
 
 ## Next step
-- Capture the remaining host-native NVDA transcript row in `docs/manual-testing-checklist.md` as residual evidence follow-up.
+- Capture the remaining host-native NVDA transcript row in `docs/manual-testing-checklist.md` as residual evidence follow-up (tracked in `https://github.com/dknauss/authorship/issues/11`).
 - Keep Phase 04 execution paused; start `04-Build-01` only after explicit go-ahead.
