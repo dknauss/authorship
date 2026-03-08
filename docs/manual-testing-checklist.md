@@ -133,7 +133,7 @@ AT transcript ledger (residual follow-up evidence; does not block Build-12 compl
 
 Residual follow-up log:
 - 2026-03-08: NVDA transcript row remains open as non-blocking evidence follow-up; this environment cannot run NVDA because it requires a Windows host.
-- Tracking ticket: `https://github.com/dknauss/authorship/issues/11`
+- Tracking ticket: https://github.com/dknauss/authorship/issues/11
 
 ## REST API tests
 
