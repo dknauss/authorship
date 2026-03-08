@@ -83,5 +83,6 @@ Expand PHPUnit coverage for multisite and public hooks/filters to raise confiden
 Planned on 2026-03-08.
 
 Execution state:
-- Not started (planning artifact only).
+- Explicit Build-01 execution not started.
+- Groundwork commit `380ba2c` landed partial multisite/runtime changes inside this scope; remaining work is coverage expansion and gate re-verification.
 </status>
