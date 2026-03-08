@@ -101,19 +101,48 @@ class Migrate_Command extends WP_CLI_Command {
 			],
 		];
 
+		// Write mode mutates the NOT EXISTS result set. Snapshot candidate IDs first
+		// so we can process stable batches without skipping posts.
+		$write_mode_post_ids = ( ! $dry_run && ! $overwrite )
+			? $this->get_wp_authors_snapshot_post_ids( $post_types )
+			: [];
+
 		do {
-			/**
-			 * @var array<WP_Post>
-			 */
-			$posts = get_posts( [
-				'posts_per_page'      => $posts_per_page,
-				'paged'               => $paged,
-				'post_type'           => $post_types,
-				'post_status'         => 'any',
-				'ignore_sticky_posts' => true,
-				'suppress_filters'    => false,
-				'tax_query'           => $tax_query,
-			] );
+			if ( ! empty( $write_mode_post_ids ) ) {
+				$offset = ( $paged - 1 ) * $posts_per_page;
+				$batch_post_ids = array_slice( $write_mode_post_ids, $offset, $posts_per_page );
+
+				if ( empty( $batch_post_ids ) ) {
+					break;
+				}
+
+				/**
+				 * @var array<WP_Post>
+				 */
+				$posts = get_posts( [
+					'posts_per_page'      => $posts_per_page,
+					'post__in'            => $batch_post_ids,
+					'orderby'             => 'post__in',
+					'post_type'           => $post_types,
+					'post_status'         => 'any',
+					'ignore_sticky_posts' => true,
+					'suppress_filters'    => false,
+					'tax_query'           => [],
+				] );
+			} else {
+				/**
+				 * @var array<WP_Post>
+				 */
+				$posts = get_posts( [
+					'posts_per_page'      => $posts_per_page,
+					'paged'               => $paged,
+					'post_type'           => $post_types,
+					'post_status'         => 'any',
+					'ignore_sticky_posts' => true,
+					'suppress_filters'    => false,
+					'tax_query'           => $tax_query,
+				] );
+			}//end if
 
 			// Exit early if there are no more posts to avoid a final sleep call.
 			if ( empty( $posts ) ) {
@@ -153,6 +182,45 @@ class Migrate_Command extends WP_CLI_Command {
 		} else {
 			WP_CLI::success( sprintf( '%d posts have had Authorship data added.', $count ) );
 		}
+	}
+
+	/**
+	 * Snapshot post IDs for deterministic write-mode wp-authors traversal.
+	 *
+	 * @param array<int,string> $post_types Target post types.
+	 *
+	 * @return array<int,int>
+	 */
+	private function get_wp_authors_snapshot_post_ids( array $post_types ) : array {
+		/**
+		 * @var array<int,int|string>
+		 */
+		$post_ids = get_posts( [
+			'fields'              => 'ids',
+			'posts_per_page'      => -1,
+			'post_type'           => $post_types,
+			'post_status'         => 'any',
+			'orderby'             => 'ID',
+			'order'               => 'ASC',
+			'ignore_sticky_posts' => true,
+			'suppress_filters'    => false,
+			'tax_query'           => [
+				[
+					'taxonomy' => 'authorship',
+					'operator' => 'NOT EXISTS',
+				],
+			],
+		] );
+
+		return array_values(
+			array_map(
+				'intval',
+				array_filter(
+					$post_ids,
+					'is_numeric'
+				)
+			)
+		);
 	}
 
 	/**

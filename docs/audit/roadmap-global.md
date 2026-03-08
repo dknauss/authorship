@@ -276,13 +276,17 @@ Clear the active correctness blockers found in the full-project review, then con
 - `04-01` and `04-Build-01` through `04-Build-07` now serve as the execution record plus the queued follow-on build plans.
 - `04-Build-01` plan queued for multisite + hook/filter coverage expansion.
 - `04-Build-02` plan queued for coverage threshold and Psalm baseline ratcheting.
-- `04-Build-03` plan queued for deterministic `wp-authors` batching remediation.
+- `04-Build-03` executed on `codex/phase-04-build-03-wp-authors-batching`:
+  - added multi-batch write-mode regression coverage proving old paged traversal skipped 100 posts in a 205-post fixture
+  - switched write-mode traversal to deterministic snapshot-ID batching
+  - added mixed existing-authorship regression to verify skip semantics plus full pending migration across multiple batches
+  - verified gates: `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
 - `04-Build-04` plan queued for stale PPA linked-user handling.
 - `04-Build-05` plan queued for implicit author-query post-type semantics.
 - `04-Build-06` plan queued for author-query callback lifecycle cleanup.
 - `04-Build-07` plan queued for user-deletion authorship sync verification and coverage hardening.
-- Next explicit execution slice is `04-Build-03` on a dedicated build branch/PR.
-- Execution priority inside Phase 04 is `04-Build-03` through `04-Build-07` (blocker remediation), then `04-Build-01` and `04-Build-02` (quality ratchet).
+- Next explicit execution slice is `04-Build-04` on a dedicated build branch/PR.
+- Execution priority inside Phase 04 is `04-Build-04` through `04-Build-07` (remaining blocker remediation), then `04-Build-01` and `04-Build-02` (quality ratchet).
 - Further Phase 04 work should proceed only through explicit build-scoped branches and PRs.
 
 ---
@@ -314,7 +318,7 @@ Items are ordered by impact and urgency. Phase assignments indicate when each it
 
 | # | Item | Notes |
 |---|------|-------|
-| 12 | Deterministic `wp-authors` batching | Full-review blocker. Fix write-mode skip bug before any non-blocking ratchet work. Planned as `04-Build-03`. |
+| 12 | Deterministic `wp-authors` batching | Full-review blocker fixed in `04-Build-03` (`codex/phase-04-build-03-wp-authors-batching`) via deterministic write-mode traversal and multi-batch regression coverage. |
 | 13 | Stale PPA linked-user hardening | Full-review blocker. Validate linked-user term meta before reuse. Planned as `04-Build-04`. |
 | 14 | Implicit author-query post-type semantics | Full-review blocker. Keep supported non-`post` content in omitted-`post_type` author queries. Planned as `04-Build-05`. |
 | 15 | Author-query callback lifecycle cleanup | Full-review blocker. Prevent `posts_pre_query` callback buildup across the request. Planned as `04-Build-06`. |
@@ -359,10 +363,10 @@ Items are ordered by impact and urgency. Phase assignments indicate when each it
 - PHPStan state: baseline contains zero ignored errors.
 - Phase 02 status: completion criteria met on 2026-03-07 (fork-local).
 - Phase 03 status: complete fork-locally through Build-12; VoiceOver pass recorded and NVDA transcript capture moved to backlog.
-- Phase 04 status: started via groundwork commit `380ba2c`; Build-01 through Build-07 plans exist as the queued follow-on lane. Blocker-remediation priority is Build-03 through Build-07.
+- Phase 04 status: started via groundwork commit `380ba2c`; Build-03 executed and Build-04 through Build-07 remain in the blocker-remediation lane before Build-01/Build-02 quality-ratchet work.
 
 ## What happens next
 
 1. Keep open upstream PRs as optional adoption paths and post concise fork-status updates when execution state shifts.
-2. Continue Phase 04 only through explicit build-scoped branches/PRs, starting with `04-Build-03`; return to `04-Build-01` and `04-Build-02` after the blocker lane is complete.
+2. Continue Phase 04 only through explicit build-scoped branches/PRs, with `04-Build-04` now next; return to `04-Build-01` and `04-Build-02` after the blocker lane is complete.
 3. Leave NVDA transcript capture as optional backlog evidence work (`UI-06`) and do not treat it as phase gating.
