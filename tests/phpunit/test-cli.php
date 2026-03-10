@@ -227,6 +227,134 @@ class TestCLI extends TestCase {
 		$this->assertSame( self::$users['editor']->ID, $authorship_authors[0]->ID );
 	}
 
+	public function testWpAuthorsWriteModeProcessesAllPostsAcrossMultipleBatches() : void {
+		$factory = self::factory()->post;
+		$post_type = 'batchpost';
+		$post_type_preexisting = post_type_exists( $post_type );
+
+		if ( ! $post_type_preexisting ) {
+			register_post_type(
+				$post_type,
+				[
+					'public' => true,
+					'supports' => [ 'author' ],
+				]
+			);
+			register_taxonomy_for_object_type( TAXONOMY, $post_type );
+		}
+
+		try {
+			$post_ids = [];
+
+			for ( $i = 0; $i < 205; $i++ ) {
+				$post = $factory->create_and_get( [
+					'post_author' => self::$users['editor']->ID,
+					'post_type' => $post_type,
+				] );
+
+				wp_set_post_terms( $post->ID, [], TAXONOMY );
+				$post_ids[] = $post->ID;
+			}
+
+			$command = new CLI\Migrate_Command();
+			$command->wp_authors( [], [
+				'dry-run' => false,
+				'post-type' => $post_type,
+				'batch-pause' => '0',
+			] );
+
+			$missing_count = 0;
+
+			foreach ( $post_ids as $post_id ) {
+				$post = get_post( $post_id );
+				$this->assertInstanceOf( \WP_Post::class, $post );
+
+				$authorship_authors = \Authorship\get_authors( $post );
+
+				if ( empty( $authorship_authors ) ) {
+					$missing_count++;
+					continue;
+				}
+
+				$this->assertSame( self::$users['editor']->ID, $authorship_authors[0]->ID );
+			}
+
+			$this->assertSame(
+				0,
+				$missing_count,
+				'Expected all posts to be migrated in write mode across multiple batches.'
+			);
+		} finally {
+			if ( ! $post_type_preexisting && post_type_exists( $post_type ) ) {
+				unregister_post_type( $post_type );
+			}
+		}
+	}
+
+	public function testWpAuthorsWriteModeSkipsExistingAuthorshipAndMigratesRemainingAcrossBatches() : void {
+		$factory = self::factory()->post;
+		$post_type = 'batchpost2';
+		$post_type_preexisting = post_type_exists( $post_type );
+
+		if ( ! $post_type_preexisting ) {
+			register_post_type(
+				$post_type,
+				[
+					'public' => true,
+					'supports' => [ 'author' ],
+				]
+			);
+			register_taxonomy_for_object_type( TAXONOMY, $post_type );
+		}
+
+		try {
+			$pre_authored_ids = [];
+			$pending_ids = [];
+
+			for ( $i = 0; $i < 205; $i++ ) {
+				$post = $factory->create_and_get( [
+					'post_author' => self::$users['editor']->ID,
+					'post_type' => $post_type,
+				] );
+
+				if ( $i < 15 ) {
+					\Authorship\set_authors( $post, [ self::$users['admin']->ID ] );
+					$pre_authored_ids[] = $post->ID;
+				} else {
+					wp_set_post_terms( $post->ID, [], TAXONOMY );
+					$pending_ids[] = $post->ID;
+				}
+			}
+
+			$command = new CLI\Migrate_Command();
+			$command->wp_authors( [], [
+				'dry-run' => false,
+				'post-type' => $post_type,
+				'batch-pause' => '0',
+			] );
+
+			foreach ( $pre_authored_ids as $post_id ) {
+				$post = get_post( $post_id );
+				$this->assertInstanceOf( \WP_Post::class, $post );
+				$authorship_authors = \Authorship\get_authors( $post );
+				$this->assertCount( 1, $authorship_authors );
+				$this->assertSame( self::$users['admin']->ID, $authorship_authors[0]->ID );
+			}
+
+			foreach ( $pending_ids as $post_id ) {
+				$post = get_post( $post_id );
+				$this->assertInstanceOf( \WP_Post::class, $post );
+				$authorship_authors = \Authorship\get_authors( $post );
+				$this->assertCount( 1, $authorship_authors );
+				$this->assertSame( self::$users['editor']->ID, $authorship_authors[0]->ID );
+			}
+		} finally {
+			if ( ! $post_type_preexisting && post_type_exists( $post_type ) ) {
+				unregister_post_type( $post_type );
+			}
+		}
+	}
+
 	public function testMigrateRespectsZeroBatchPause() : void {
 		$factory = self::factory()->post;
 
@@ -472,6 +600,68 @@ class TestCLI extends TestCase {
 			$this->assertCount( 1, $authorship_authors );
 			$this->assertSame( $existing_user->ID, $authorship_authors[0]->ID );
 			$this->assertSame( $existing_user->ID, username_exists( 'ppa-existing-author' ) );
+		} finally {
+			if ( $term_id > 0 && taxonomy_exists( 'author' ) ) {
+				wp_delete_term( $term_id, 'author' );
+			}
+
+			if ( ! $author_taxonomy_preexisting && taxonomy_exists( 'author' ) ) {
+				unregister_taxonomy( 'author' );
+			}
+		}
+	}
+
+	public function testPpaMigrationIgnoresStaleLinkedUserMetaAndFallsBackToLogin() : void {
+		$factory = self::factory()->post;
+		$author_taxonomy_preexisting = taxonomy_exists( 'author' );
+		$term_id = 0;
+
+		if ( ! $author_taxonomy_preexisting ) {
+			register_taxonomy(
+				'author',
+				'post',
+				[
+					'public'    => false,
+					'query_var' => false,
+					'rewrite'   => false,
+				]
+			);
+		}
+
+		$existing_user = self::factory()->user->create_and_get( [
+			'role'          => 'author',
+			'user_login'    => 'ppa-stale-linked-user',
+			'user_nicename' => 'stale-linked-user-profile',
+			'display_name'  => 'Stale Linked User Fallback',
+			'user_email'    => 'ppa-stale-linked-user@example.org',
+		] );
+
+		try {
+			$post = $factory->create_and_get( [
+				'post_author' => self::$users['editor']->ID,
+			] );
+
+			$term = wp_insert_term( 'PPA Stale Linked User', 'author', [
+				'slug' => 'ppa-stale-linked-user',
+			] );
+			$this->assertIsArray( $term );
+			$this->assertArrayHasKey( 'term_id', $term );
+
+			$term_id = (int) $term['term_id'];
+			wp_set_object_terms( $post->ID, [ $term_id ], 'author' );
+			update_term_meta( $term_id, 'user_id', 999999 );
+
+			$command = new CLI\Migrate_Command();
+			$command->ppa( [], [
+				'dry-run' => false,
+				'overwrite-authors' => true,
+				'batch-pause' => '0',
+			] );
+
+			$authorship_authors = \Authorship\get_authors( $post );
+
+			$this->assertCount( 1, $authorship_authors );
+			$this->assertSame( $existing_user->ID, $authorship_authors[0]->ID );
 		} finally {
 			if ( $term_id > 0 && taxonomy_exists( 'author' ) ) {
 				wp_delete_term( $term_id, 'author' );

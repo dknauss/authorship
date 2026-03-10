@@ -68,5 +68,16 @@ Eliminate the write-mode `wp-authors` batching bug so migrations with more than 
 Planned on 2026-03-08.
 
 Execution state:
-- Not started (planning artifact only).
+- Executed on `codex/phase-04-build-03-wp-authors-batching`.
+- Added failing regression coverage for multi-batch write mode:
+  - `testWpAuthorsWriteModeProcessesAllPostsAcrossMultipleBatches`
+  - `testWpAuthorsWriteModeSkipsExistingAuthorshipAndMigratesRemainingAcrossBatches`
+- Replaced mutable paged traversal in write mode with deterministic snapshot-ID batching.
+- Verified gate suite:
+  - `composer test:integration`
+  - `WP_MULTISITE=1 composer test:integration`
+  - `composer analyse:phpstan`
+  - `composer analyse:psalm`
+  - `composer lint`
+- Next slice remains `04-Build-04` (stale PPA linked-user hardening).
 </status>
