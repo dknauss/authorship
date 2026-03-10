@@ -62,7 +62,7 @@ class TestRESTAPIUserEndpointMultisite extends RESTAPITestCase {
 		] );
 	}
 
-	public function testIncludeCanReturnCrossSiteAuthorWithoutRoleOnCurrentSite() : void {
+	public function testIncludeDoesNotReturnCrossSiteAuthorWithoutRoleOnCurrentSiteByDefault() : void {
 		switch_to_blog( self::$sub_site->blog_id );
 		$this->set_permalink_structure( '/%year%/%monthnum%/%day%/%postname%/' );
 
@@ -83,13 +83,13 @@ class TestRESTAPIUserEndpointMultisite extends RESTAPITestCase {
 			$message  = self::get_message( $response );
 
 			$this->assertSame( WP_Http::OK, $response->get_status(), $message );
-			$this->assertSame( [ self::$cross_site_author->ID ], wp_list_pluck( $data, 'id' ) );
+			$this->assertNotContains( self::$cross_site_author->ID, wp_list_pluck( $data, 'id' ) );
 		} finally {
 			restore_current_blog();
 		}
 	}
 
-	public function testSearchCanReturnCrossSiteAuthorWithoutRoleOnCurrentSite() : void {
+	public function testSearchDoesNotReturnCrossSiteAuthorWithoutRoleOnCurrentSiteByDefault() : void {
 		switch_to_blog( self::$sub_site->blog_id );
 		$this->set_permalink_structure( '/%year%/%monthnum%/%day%/%postname%/' );
 
@@ -105,9 +105,74 @@ class TestRESTAPIUserEndpointMultisite extends RESTAPITestCase {
 			$message  = self::get_message( $response );
 
 			$this->assertSame( WP_Http::OK, $response->get_status(), $message );
-			$this->assertContains( self::$cross_site_author->ID, wp_list_pluck( $data, 'id' ) );
+			$this->assertNotContains( self::$cross_site_author->ID, wp_list_pluck( $data, 'id' ) );
 		} finally {
 			restore_current_blog();
 		}
+	}
+
+	public function testIncludeCanReturnCrossSiteAuthorWhenNetworkModeFilterEnabled() : void {
+		switch_to_blog( self::$sub_site->blog_id );
+		$this->set_permalink_structure( '/%year%/%monthnum%/%day%/%postname%/' );
+
+		try {
+			wp_set_current_user( self::$users['admin']->ID );
+			add_filter( 'authorship_cross_site_mode', [ $this, 'forceNetworkMode' ] );
+
+			$cross_site_author = get_user_by( 'ID', self::$cross_site_author->ID );
+			$this->assertNotFalse( $cross_site_author );
+			$this->assertEmpty( $cross_site_author->roles );
+
+			$request = new WP_REST_Request( 'GET', self::$route );
+			$request->set_param( 'include', [ self::$cross_site_author->ID ] );
+			$request->set_param( 'orderby', 'include' );
+			$request->set_param( 'post_type', 'post' );
+
+			$response = self::rest_do_request( $request );
+			$data     = $response->get_data();
+			$message  = self::get_message( $response );
+
+			$this->assertSame( WP_Http::OK, $response->get_status(), $message );
+			$this->assertSame( [ self::$cross_site_author->ID ], wp_list_pluck( $data, 'id' ) );
+		} finally {
+			remove_filter( 'authorship_cross_site_mode', [ $this, 'forceNetworkMode' ], 10 );
+			restore_current_blog();
+		}
+	}
+
+	public function testSearchCanReturnCrossSiteAuthorWhenNetworkModeFilterEnabled() : void {
+		switch_to_blog( self::$sub_site->blog_id );
+		$this->set_permalink_structure( '/%year%/%monthnum%/%day%/%postname%/' );
+
+		try {
+			wp_set_current_user( self::$users['admin']->ID );
+			add_filter( 'authorship_cross_site_mode', [ $this, 'forceNetworkMode' ] );
+
+			$request = new WP_REST_Request( 'GET', self::$route );
+			$request->set_param( 'search', 'Cross Site Author' );
+			$request->set_param( 'post_type', 'post' );
+
+			$response = self::rest_do_request( $request );
+			$data     = $response->get_data();
+			$message  = self::get_message( $response );
+
+			$this->assertSame( WP_Http::OK, $response->get_status(), $message );
+			$this->assertContains( self::$cross_site_author->ID, wp_list_pluck( $data, 'id' ) );
+		} finally {
+			remove_filter( 'authorship_cross_site_mode', [ $this, 'forceNetworkMode' ], 10 );
+			restore_current_blog();
+		}
+	}
+
+	/**
+	 * Force explicit network mode for REST user endpoint tests.
+	 *
+	 * @param string $mode Current mode.
+	 * @return string
+	 */
+	public function forceNetworkMode( string $mode ) : string {
+		unset( $mode );
+
+		return 'network';
 	}
 }

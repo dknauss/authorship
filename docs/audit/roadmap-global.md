@@ -18,6 +18,14 @@ At this stage, the work is focused on making the plugin safer to operate and eas
 3. Raise operational confidence before expanding feature surface.
 4. Keep upstream PRs as optional value, not a dependency.
 5. Offer upstream contributions at natural phase boundaries in minimal, well-scoped PRs.
+6. Keep security and observability integration-first: Authorship owns attribution semantics, complementary plugins own reauthentication and persistent audit trails.
+
+### Complementary plugin model
+- Authorship remains focused on attribution data model, editor/REST/WP-CLI behavior, and extension hooks.
+- Session hardening and risky-operation reauthentication are delegated to WP Sudo where deployed.
+- Persistent audit logging is delegated to activity log plugins (for example Stream/WSAL) via hooks.
+- Authorship should provide stable hook contracts for attribution lifecycle events so external logging remains first-class.
+- No first-party audit table/dashboard is planned in Authorship while the complementary stack is assumed.
 
 ### Strict fork-first upstream policy (effective 2026-03-08)
 - Canonical reference: `docs/fork-first-policy.md`
@@ -264,7 +272,9 @@ Clear the active correctness blockers found in the full-project review, then con
 - **PPA migration hardening**: Validate stale PublishPress linked-user metadata before reuse and fall back safely.
 - **Author-query semantics**: Fix omitted-`post_type` author queries so supported content is not collapsed to `post` only.
 - **Query callback lifecycle**: Stop leaking `posts_pre_query` callbacks across the request while preserving restored query vars.
-- **Multisite test expansion**: Cross-site author queries, super admin capabilities on subsites, author archives on subsites. Currently only 1 multisite test.
+- **Multisite test expansion**: REST user endpoint cross-site include/search coverage, super admin capabilities on subsites, author archives on subsites. Currently only 1 multisite test.
+- **Cross-site mode contract (Phase 04)**: REST user lookups remain site-local by default; filter `authorship_cross_site_mode` may opt into `network`; non-REST query-surface expansion is deferred.
+- **Observability contract (Phase 04+)**: Favor hook-based interoperability for external audit plugins (for example Stream/WSAL); do not add a built-in audit datastore/dashboard.
 - **Coverage ratcheting continuation**: Incremental threshold raises toward 80%+.
 - **Quality-ratchet continuation**: Keep PHPStan/Psalm/coverage thresholds on a conservative ratchet only after blocker remediation is complete.
 - **Custom post type coverage**: Deeper testing of CPT-specific capability mapping, especially with `map_meta_cap`.
@@ -273,7 +283,7 @@ Clear the active correctness blockers found in the full-project review, then con
 
 ### Execution status (2026-03-08)
 - `380ba2c` landed Phase 04 groundwork before the intended planning-only boundary held, touching Build-01, Build-04, Build-05, and Build-07 scope.
-- `04-01` and `04-Build-01` through `04-Build-07` now serve as the execution record plus the queued follow-on build plans.
+- `04-01` and `04-Build-01` through `04-Build-08` now serve as the execution record plus the queued follow-on build plans.
 - `04-Build-01` plan queued for multisite + hook/filter coverage expansion.
 - `04-Build-02` plan queued for coverage threshold and Psalm baseline ratcheting.
 - `04-Build-03` executed on `codex/phase-04-build-03-wp-authors-batching`:
@@ -288,8 +298,11 @@ Clear the active correctness blockers found in the full-project review, then con
 - `04-Build-05` plan queued for implicit author-query post-type semantics.
 - `04-Build-06` plan queued for author-query callback lifecycle cleanup.
 - `04-Build-07` plan queued for user-deletion authorship sync verification and coverage hardening.
+- `04-Build-08` plan queued for attribution lifecycle observability hook contract implementation (`docs/audit/authorship-observability-hook-contract.md`).
+- Canonical execution board: `.planning/phases/04-test-depth-and-ratcheting-authorship/04-execution-board.md`.
+- Phase 04 decision: explicit network mode remains REST-only and default-off in this phase; widening beyond REST is backlogged.
 - Next explicit execution slice is `04-Build-05` on a dedicated build branch/PR.
-- Execution priority inside Phase 04 is `04-Build-05` through `04-Build-07` (remaining blocker remediation), then `04-Build-01` and `04-Build-02` (quality ratchet).
+- Execution priority inside Phase 04 is `04-Build-05` through `04-Build-07` (remaining blocker remediation), then `04-Build-01` and `04-Build-02` (quality ratchet), then `04-Build-08` (observability hook contract).
 - Further Phase 04 work should proceed only through explicit build-scoped branches and PRs.
 
 ---
@@ -331,20 +344,23 @@ Items are ordered by impact and urgency. Phase assignments indicate when each it
 | 19 | CPT capability test depth | `map_meta_cap` edge cases |
 | 20 | Cache invalidation tests | Object cache interactions |
 | 21 | Hook/filter contract tests | `authorship_default_author`, etc. |
-| 22 | `post_author` field synchronization | Sync `post_author` with first attributed author on `set_authors()` to close theme/SEO/caching compatibility gap. See `.planning/known-gaps.md` §`post_author` field divergence. |
-| 23 | Schema.org / JSON-LD author markup in HTML | Structured author data in page output for SEO. Competitors (PPA Pro, Molongui) already provide this. Independent of feed/Byline work. |
+| 22 | Attribution lifecycle hooks for external audit plugins | Implement contract from `docs/audit/authorship-observability-hook-contract.md` via `04-Build-08` so Stream/WSAL-style plugins can log author set/remove/replace flows without Authorship storing its own audit trail. |
+| 23 | `post_author` field synchronization | Sync `post_author` with first attributed author on `set_authors()` to close theme/SEO/caching compatibility gap. See `.planning/known-gaps.md` §`post_author` field divergence. |
+| 24 | Schema.org / JSON-LD author markup in HTML | Structured author data in page output for SEO. Competitors (PPA Pro, Molongui) already provide this. Independent of feed/Byline work. |
+| 25 | Widen cross-site network mode beyond REST (optional) | Keep Phase 04 contract REST-only; evaluate non-REST query/archives scope as a future product decision with explicit UX/security review. |
 
 ### P3 — Product features (future, no phase assigned)
 
 | # | Item | Notes |
 |---|------|-------|
-| 24 | Classic editor support | README marks incomplete |
-| 25 | Atom feed support | README marks incomplete |
-| 26 | `init_taxonomy` "Mine" count performance | `get_term_by` on every `init`; cache or lazy-load |
-| 27 | Quick edit author hide cleanup | `include => [0]` hack is fragile |
-| 28 | Site builder implementation guidance | README aspirational item |
-| 29 | REST API embedding depth tests | Embedded author data structure |
-| 30 | NVDA transcript evidence capture | Optional Windows-host spoken-output capture for `UI-06`; backlogged and non-blocking |
+| 26 | Classic editor support | README marks incomplete |
+| 27 | Atom feed support | README marks incomplete |
+| 28 | `init_taxonomy` "Mine" count performance | `get_term_by` on every `init`; cache or lazy-load |
+| 29 | Quick edit author hide cleanup | `include => [0]` hack is fragile |
+| 30 | Site builder implementation guidance | README aspirational item |
+| 31 | REST API embedding depth tests | Embedded author data structure |
+| 32 | NVDA transcript evidence capture | Optional Windows-host spoken-output capture for `UI-06`; backlogged and non-blocking |
+| 33 | Sudo + audit-log interoperability runbook | Operational guide for deploying Authorship with WP Sudo and Stream/WSAL (capability model, expected hooks/events, troubleshooting). |
 
 ---
 
@@ -366,10 +382,10 @@ Items are ordered by impact and urgency. Phase assignments indicate when each it
 - PHPStan state: baseline contains zero ignored errors.
 - Phase 02 status: completion criteria met on 2026-03-07 (fork-local).
 - Phase 03 status: complete fork-locally through Build-12; VoiceOver pass recorded and NVDA transcript capture moved to backlog.
-- Phase 04 status: started via groundwork commit `380ba2c`; Build-03 and Build-04 executed and Build-05 through Build-07 remain in the blocker-remediation lane before Build-01/Build-02 quality-ratchet work.
+- Phase 04 status: started via groundwork commit `380ba2c`; Build-03 and Build-04 executed; Build-01 through Build-08 plans exist as the queued follow-on lane. Remaining blocker-remediation priority is Build-05 through Build-07, then Build-01/Build-02 quality ratchet, then Build-08 observability.
 
 ## What happens next
 
 1. Keep open upstream PRs as optional adoption paths and post concise fork-status updates when execution state shifts.
-2. Continue Phase 04 only through explicit build-scoped branches/PRs, with `04-Build-05` now next; return to `04-Build-01` and `04-Build-02` after the blocker lane is complete.
+2. Continue Phase 04 only through explicit build-scoped branches/PRs, with `04-Build-05` now next; return to `04-Build-01` and `04-Build-02` after the blocker lane is complete, then execute `04-Build-08`.
 3. Leave NVDA transcript capture as optional backlog evidence work (`UI-06`) and do not treat it as phase gating.

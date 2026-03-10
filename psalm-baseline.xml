@@ -90,9 +90,6 @@
     <MixedReturnStatement>
       <code><![CDATA[apply_filters( 'authorship_rest_user_collection_params', $query_params )]]></code>
     </MixedReturnStatement>
-    <PossiblyUnusedParam>
-      <code><![CDATA[$request]]></code>
-    </PossiblyUnusedParam>
     <PossiblyUnusedReturnValue>
       <code><![CDATA[mixed[]]]></code>
       <code><![CDATA[mixed[]]]></code>
