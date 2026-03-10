@@ -1,23 +1,44 @@
-# Authorship
-
-Stable tag: 0.2.17  
-Requires at least: 5.4  
-Tested up to: 6.6  
-Requires PHP: 7.2  
-License: GPL v3 or later  
-Contributors: johnbillion, humanmade  
+# Authorship (Fork)
 
 A modern approach to author attribution in WordPress.
 
+This repository (`dknauss/authorship`) is the active fork of [humanmade/authorship](https://github.com/humanmade/authorship) and is operated with a fork-first workflow.
+
+## Project Status
+
+- Canonical integration branch: `develop` (branch protection enabled)
+- Active release channel: Git tags + GitHub Releases from this fork
+- Upstream PRs (`humanmade/authorship`): minimized and optional
+- Upstream (`humanmade/authorship`): original source, not actively maintained
+- Requires PHP: 7.2+ (upstream baseline; fork CI gates on 7.4–8.4)
+- Tested up to: WordPress 6.6
+
+For canonical branch/release policy, see [docs/fork-first-policy.md](docs/fork-first-policy.md).
+
+## Fork-First Policy
+
+**Nothing goes back to upstream (`humanmade/authorship`) by default.** Upstream contributions are cherry-picked bug fixes and enhancements that can be backported to the original testing, standards, and PHP requirements. All development targets the fork first.
+
+Mandatory rules:
+
+* All new work lands on fork `develop` via PRs with passing CI.
+* Upstream PRs are optional adoption paths — never delivery gates.
+* Do not open one upstream PR per incremental build slice.
+* Upstream submissions happen only at explicit packaging checkpoints.
+* Cherry-picked upstream PRs must be independently mergeable against upstream CI and standards.
+* Fork-local artifacts (`.planning/`, `docs/audit/`) are excluded from all upstream branches.
+
+Canonical policy: [docs/fork-first-policy.md](docs/fork-first-policy.md)
+
 ## Description
 
-Authorship is a modern approach to author attribution in WordPress. It supports attributing posts to multiple authors and to guest authors, provides a great UI, and treats API access to author data as a first-class citizen.
+Authorship supports attributing posts to multiple authors and to guest authors, provides a great UI, and treats API access to author data as a first-class citizen.
 
 Authorship is currently geared toward developers who are implementing custom solutions on WordPress. For example, it doesn't provide an option to automatically display author profiles at the bottom of a post. In the future it will include wider support for existing themes and useful features for implementors and site builders.
 
 ---
 
-- [Fork Status](#fork-status)
+- [Project Status](#project-status)
 - [Fork-First Policy](#fork-first-policy)
 - [Changelog](#changelog)
 - [Current Status](#current-status)
@@ -38,24 +59,6 @@ Authorship is currently geared toward developers who are implementing custom sol
 - [Alternatives](#alternatives)
 
 ---
-
-## Fork Status
-
-This repository (`dknauss/authorship`) is an active fork of [humanmade/authorship](https://github.com/humanmade/authorship).
-
-Fork operating model:
-
-* Default branch is `develop` (branch protection enabled).
-* Delivery is fork-first: phase completion is based on fork-local outcomes, not upstream merge timing.
-* Upstream pull requests are optional adoption paths, not delivery gates.
-* Planning and execution status are tracked in:
-  * `docs/audit/roadmap-global.md`
-  * `docs/audit/roadmap-01.md`
-  * `.planning/phases/`
-
-## Fork-First Policy
-
-Canonical policy: `docs/fork-first-policy.md`
 
 ## Changelog
 
@@ -87,11 +90,17 @@ _Features without a checkmark are still work in progress._
 
 ### For normal use
 
-    composer require humanmade/authorship
+Clone or download from this fork:
+
+    git clone https://github.com/dknauss/authorship.git wp-content/plugins/authorship
+
+Or, if your project uses Composer with a VCS repository:
+
+    composer require dknauss/authorship
 
 ### For development use
 
-* Clone this repo into your plugins directory
+* Clone this fork into your plugins directory
 * Ensure you have Composer v2 and Node v20 installed
 * Install the dependencies:
   `composer install && npm install`
@@ -379,9 +388,18 @@ Current policy direction in this fork: keep Authorship focused on attribution be
 
 Code contributions, feedback, and feature suggestions are very welcome.
 
-For this fork, open issues/PRs in `dknauss/authorship` and follow [CONTRIBUTING.md](CONTRIBUTING.md) from this repository.
+**All contributions target this fork** (`dknauss/authorship`):
 
-If a change is intended for upstream, open the fork PR first and then prepare a separately scoped upstream PR against `humanmade/authorship` `develop`.
+* Open issues and PRs against fork `develop`.
+* Follow [CONTRIBUTING.md](CONTRIBUTING.md) from this repository.
+* Fork-local CI must be green before merge.
+
+**Upstream contributions are cherry-picked, not automatic.** If a bug fix or enhancement is suitable for backporting to `humanmade/authorship`:
+
+1. Land the change on fork `develop` first.
+2. At an explicit packaging checkpoint, cherry-pick eligible commits into a separately scoped upstream PR.
+3. Upstream PRs must be independently mergeable against upstream CI and meet upstream's PHP/WP baseline.
+4. Fork delivery is never blocked on upstream review or acceptance.
 
 ## Team
 
