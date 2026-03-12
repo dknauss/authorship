@@ -2,7 +2,7 @@
 
 This file is the single source of truth for current repository counts.
 
-Last verified: 2026-03-09
+Last verified: 2026-03-12
 Verification environment: local repo checkout at `/Users/danknauss/Documents/GitHub/authorship`
 
 ## Test Metrics
@@ -20,11 +20,11 @@ Verification environment: local repo checkout at `/Users/danknauss/Documents/Git
 
 | Metric | Value | Verification |
 |---|---:|---|
-| Production PHP lines (`inc/` + `plugin.php`) | 2,705 | `find ./inc -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` + `wc -l plugin.php` |
-| Test PHP lines (`tests/phpunit/`) | 4,080 | `find ./tests/phpunit -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` |
+| Production PHP lines (`inc/` + `plugin.php`) | 2,719 | `find ./inc -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` + `wc -l plugin.php` |
+| Test PHP lines (`tests/phpunit/`) | 4,055 | `find ./tests/phpunit -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` |
 | JS/TS source lines (`src/`) | 766 | `find ./src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.scss" \) -print0 \| xargs -0 wc -l \| tail -1` |
 | JS test lines (`tests/js/`) | 761 | `find ./tests/js -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" \) -print0 \| xargs -0 wc -l \| tail -1` |
-| Test-to-production ratio (PHP) | 1.51:1 | `4080 / 2705` |
+| Test-to-production ratio (PHP) | 1.49:1 | `4055 / 2719` |
 
 ## Architectural Facts
 
@@ -37,7 +37,7 @@ numbers MUST point to or be verified against this table.
 | Author taxonomy | `wp-authors` | `grep "TAXONOMY" inc/taxonomy.php` | v0.1.0 |
 | REST controllers | 1 | `Users_Controller` in `inc/class-users-controller.php` | v0.1.0 |
 | WP-CLI commands | 1 | `Migrate_Command` in `inc/cli/` | v0.2.0 |
-| React components | ~8 | `find src/components -name "*.tsx" \| wc -l` | Phase 03 |
+| React components | 3 | `find src/components -name "*.tsx" \| wc -l` | Phase 03 |
 | PHPStan level | max | `grep "level:" phpstan.neon.dist` | Phase 02 |
 | Psalm baseline | committed | `psalm-baseline.xml` | Phase 02 |
 
@@ -46,6 +46,8 @@ numbers MUST point to or be verified against this table.
 - `README.md` — plugin description
 - `.planning/README.md` — technical architecture summary
 - `docs/manual-testing-checklist.md` — testing prompts
+- `CLAUDE.md`, `AGENTS.md` — agent guidance
+- `.planning/STATE.md` — workflow state
 
 ## CI Matrix Snapshot
 
@@ -59,12 +61,39 @@ Source: `.github/workflows/`
 
 ## Verification Notes
 
+- LOC counts verified on `develop` on 2026-03-12.
 - `composer test:ut` passed on 2026-03-09 (179 tests, 1461 assertions).
-- `npm run test:js -- --ci` passed on 2026-03-09 (3 suites, 16 tests).
+- `npm run test:js -- --ci` passed on 2026-03-12 (3 suites, 16 tests).
 - `composer analyse:phpstan` passed on 2026-03-09.
+
+## Verification Script
+
+Run after any structural edit:
+
+```bash
+cd /Users/danknauss/Documents/GitHub/authorship
+
+echo "=== Production PHP ==="
+find ./inc -type f -name "*.php" -print0 | xargs -0 wc -l | tail -1
+wc -l plugin.php
+
+echo "=== Test PHP ==="
+find ./tests/phpunit -type f -name "*.php" -print0 | xargs -0 wc -l | tail -1
+
+echo "=== JS/TS source ==="
+find ./src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.scss" \) -print0 | xargs -0 wc -l | tail -1
+
+echo "=== JS tests ==="
+find ./tests/js -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" \) -print0 | xargs -0 wc -l | tail -1
+
+echo "=== Architectural ==="
+echo "React components: $(find src/components -name '*.tsx' | wc -l)"
+echo "PHPStan level: $(grep 'level:' phpstan.neon.dist)"
+```
 
 ## Update Procedure
 
-1. Re-run all verification commands listed above.
-2. Update this file first.
-3. Keep other docs referencing this file instead of duplicating current counts.
+1. Re-run the verification script above.
+2. Compare results to this table. Update any changed values.
+3. Update all files listed in "Files that reference these counts."
+4. Update `CHANGELOG.md` if counts changed significantly.
