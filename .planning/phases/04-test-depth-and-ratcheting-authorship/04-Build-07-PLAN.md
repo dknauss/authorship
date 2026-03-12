@@ -119,6 +119,9 @@ The `action_deleted_user` handler and `sync_deleted_user_authorship_for_current_
 Planned on 2026-03-08.
 
 Execution state:
-- Explicit Build-07 execution not started.
-- Implementation exists in groundwork commit 380ba2c; this build adds verification depth and coverage hardening.
+- Executed on 2026-03-12 on `codex/phase-04-build-07-user-deletion-sync`.
+- Expanded single-site deletion coverage for sole-author removal/reassignment, guest-author deletion, and invalid/self reassignment fallback handling.
+- Expanded multisite coverage for network-wide authorship sync across sites and graceful no-taxonomy helper handling.
+- Verified existing groundwork implementation without production-code changes.
+- Verification gates passed: `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`.
 </status>

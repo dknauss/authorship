@@ -26,7 +26,7 @@ See: `README.md`, `.planning/README.md`
 ### Phase 04 Remaining Builds
 
 - **Build-06:** Author-query callback lifecycle cleanup (queued)
-- **Build-07:** User-deletion authorship sync verification (planned)
+- **Build-07:** User-deletion authorship sync verification (completed)
 - **Build-08:** Remaining quality gates and threshold ratcheting (planned)
 
 ### Key Decisions
@@ -46,5 +46,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Build-05 and Build-06 complete; Build-07 is the remaining blocker-lane slice
+Stopped at: Build-07 complete; blocker lane closed and Build-01 is next
 Current metrics: See `docs/current-metrics.md`
