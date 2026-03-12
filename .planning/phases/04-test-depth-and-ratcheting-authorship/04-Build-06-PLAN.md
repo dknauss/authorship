@@ -66,7 +66,10 @@ Remove the leaked `posts_pre_query` callback accumulation from author-query rewr
 
 <status>
 Planned on 2026-03-08.
+Executed on 2026-03-12.
 
 Execution state:
-- Not started (planning artifact only).
+- Added regression coverage proving repeated author-filtered queries do not accumulate `posts_pre_query` callbacks.
+- Replaced the accumulating anonymous callback with a self-removing one-shot callback scoped to the active `WP_Query` instance.
+- Re-verified: `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, and `composer lint`.
 </status>
