@@ -295,14 +295,22 @@ Clear the active correctness blockers found in the full-project review, then con
   - added stale linked-user regression where PublishPress `user_id` term meta points to a nonexistent user
   - validated mapped linked-user IDs before reuse and fell back to existing login/slug resolution when stale
   - verified gates: `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
-- `04-Build-05` plan queued for implicit author-query post-type semantics.
-- `04-Build-06` plan queued for author-query callback lifecycle cleanup.
+- `04-Build-05` executed on `codex/phase-04-build-05-author-query-post-type-clean`:
+  - added omitted-`post_type` author-query regressions for both `author` and `author_name` paths
+  - added author-archive regression coverage confirming supported `page` content is included
+  - updated implicit author-query post-type resolution to use supported post types instead of defaulting to `post`
+  - verified gates: `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
+- `04-Build-06` executed on `codex/phase-04-build-06-query-callback-lifecycle`:
+  - added regression coverage proving repeated author-filtered queries do not accumulate `posts_pre_query` callbacks
+  - replaced accumulating anonymous callback behavior with a self-removing one-shot callback scoped to the active query instance
+  - restored `README.md` stable-tag metadata compatibility required by `TestPlugin::testReadmeIsUpToDate` during gate verification
+  - verified gates: `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
 - `04-Build-07` plan queued for user-deletion authorship sync verification and coverage hardening.
 - `04-Build-08` plan queued for attribution lifecycle observability hook contract implementation (`docs/audit/authorship-observability-hook-contract.md`).
 - Canonical execution board: `.planning/phases/04-test-depth-and-ratcheting-authorship/04-execution-board.md`.
 - Phase 04 decision: explicit network mode remains REST-only and default-off in this phase; widening beyond REST is backlogged.
-- Next explicit execution slice is `04-Build-05` on a dedicated build branch/PR.
-- Execution priority inside Phase 04 is `04-Build-05` through `04-Build-07` (remaining blocker remediation), then `04-Build-01` and `04-Build-02` (quality ratchet), then `04-Build-08` (observability hook contract).
+- Next explicit execution slice is `04-Build-07` on a dedicated build branch/PR.
+- Execution priority inside Phase 04 is `04-Build-07` (remaining blocker remediation), then `04-Build-01` and `04-Build-02` (quality ratchet), then `04-Build-08` (observability hook contract).
 - Further Phase 04 work should proceed only through explicit build-scoped branches and PRs.
 
 ---
@@ -336,8 +344,8 @@ Items are ordered by impact and urgency. Phase assignments indicate when each it
 |---|------|-------|
 | 12 | Deterministic `wp-authors` batching | Full-review blocker fixed in `04-Build-03` (`codex/phase-04-build-03-wp-authors-batching`) via deterministic write-mode traversal and multi-batch regression coverage. |
 | 13 | Stale PPA linked-user hardening | Full-review blocker fixed in `04-Build-04` (`codex/phase-04-build-04-ppa-linked-user-hardening`) by validating mapped linked-user IDs before reuse and preserving login/slug fallback. |
-| 14 | Implicit author-query post-type semantics | Full-review blocker. Keep supported non-`post` content in omitted-`post_type` author queries. Planned as `04-Build-05`. |
-| 15 | Author-query callback lifecycle cleanup | Full-review blocker. Prevent `posts_pre_query` callback buildup across the request. Planned as `04-Build-06`. |
+| 14 | Implicit author-query post-type semantics | Full-review blocker fixed in `04-Build-05` (`codex/phase-04-build-05-author-query-post-type-clean`) by adding omitted-`post_type` regression coverage and resolving implicit author queries to the supported post-type set. |
+| 15 | Author-query callback lifecycle cleanup | Full-review blocker fixed in `04-Build-06` (`codex/phase-04-build-06-query-callback-lifecycle`) by adding callback-accumulation regression coverage and a self-removing one-shot restore callback. |
 | 16 | Multisite test expansion | Existing Phase 04 quality work. Planned as `04-Build-01` after blocker remediation. |
 | 17 | Coverage ratcheting toward 80% | Existing Phase 04 quality work. Planned as `04-Build-02` after blocker remediation. |
 | 18 | Quality-ratchet continuation | Keep conservative coverage/Psalm tightening only after the blocker queue is green. |
@@ -377,15 +385,15 @@ Items are ordered by impact and urgency. Phase assignments indicate when each it
 - Upstream hygiene state:
   - superseded HM PRs `#160`, `#161`, and `#167`-`#172` were closed on 2026-03-08 to enforce strict fork-first scope discipline
 - Quality state: `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`, `composer test:coverage`, and `npm run test:js:coverage` are all green.
-- PHPUnit coverage state: 163 tests in integration run and statement coverage `65.51%` (`625/954`) with threshold ratcheted to `63%`.
+- PHPUnit coverage state: threshold ratcheted to `63%`; latest recorded statement coverage was `65.51%` (`625/954`). Current PHPUnit test totals are tracked in `docs/current-metrics.md`.
 - JS coverage state (`npm run test:js:coverage`): statements `82.06%`, branches `59.37%`, functions `74.35%`, lines `81.95%` against enforced thresholds (80/55/70/80).
 - PHPStan state: baseline contains zero ignored errors.
 - Phase 02 status: completion criteria met on 2026-03-07 (fork-local).
 - Phase 03 status: complete fork-locally through Build-12; VoiceOver pass recorded and NVDA transcript capture moved to backlog.
-- Phase 04 status: started via groundwork commit `380ba2c`; Build-03 and Build-04 executed; Build-01 through Build-08 plans exist as the queued follow-on lane. Remaining blocker-remediation priority is Build-05 through Build-07, then Build-01/Build-02 quality ratchet, then Build-08 observability.
+- Phase 04 status: started via groundwork commit `380ba2c`; Build-03 through Build-06 executed; Build-01 through Build-08 plans exist as the queued follow-on lane. Remaining blocker-remediation priority is Build-07, then Build-01/Build-02 quality ratchet, then Build-08 observability.
 
 ## What happens next
 
 1. Keep open upstream PRs as optional adoption paths and post concise fork-status updates when execution state shifts.
-2. Continue Phase 04 only through explicit build-scoped branches/PRs, with `04-Build-05` now next; return to `04-Build-01` and `04-Build-02` after the blocker lane is complete, then execute `04-Build-08`.
+2. Continue Phase 04 only through explicit build-scoped branches/PRs, with `04-Build-07` now next; return to `04-Build-01` and `04-Build-02` after the blocker lane is complete, then execute `04-Build-08`.
 3. Leave NVDA transcript capture as optional backlog evidence work (`UI-06`) and do not treat it as phase gating.
