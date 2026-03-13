@@ -49,13 +49,18 @@ interface SortableSelectProps extends AsyncCreatableProps<Option, true, GroupBas
 /**
  * Overrides the default option display with our custom one.
  *
- * @param {Option} option The option data.
+ * In the 'value' context (selected chips), renders a compact pill with a small avatar.
+ * In the 'menu' context (dropdown), renders a larger avatar alongside the name.
+ *
+ * @param {Option}                          option       The option data.
+ * @param {Object}                          meta         Metadata from react-select.
+ * @param {'menu' | 'value'}                meta.context Where the label is rendered.
  * @returns {ReactElement} The element.
  */
-const formatOptionLabel = ( option: Option ): ReactElement => (
+const formatOptionLabel = ( option: Option, { context }: { context: string } ): ReactElement => (
 	<>
 		{ option.avatar && (
-			<div className={ `${classNamePrefix}__multi-value__avatar` }>
+			<div className={ `${classNamePrefix}__${ context === 'value' ? 'multi-value' : 'menu' }__avatar` }>
 				<img alt="" src={ option.avatar }/>
 			</div>
 		) }
