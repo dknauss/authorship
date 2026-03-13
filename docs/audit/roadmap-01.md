@@ -38,20 +38,25 @@ See also: [Global Roadmap](roadmap-global.md) for project-wide purpose, history,
     - added stale linked-user regression for nonexistent PublishPress mapped user IDs
     - validated mapped linked-user IDs before reuse and preserved login/slug fallback behavior
     - re-verified `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
-  - `04-Build-05` and `04-Build-07` remain queued for blocker remediation:
-    - implicit author-query post-type semantics
-    - user-deletion authorship sync verification and coverage hardening
+  - `04-Build-05` executed on `codex/phase-04-build-05-author-query-post-type-clean`:
+    - added omitted-`post_type` regression coverage for `author` and `author_name` queries including supported `post` and `page` content
+    - added archive regression coverage confirming supported `page` content appears in author archives
+    - re-verified `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
   - `04-Build-06` executed on `codex/phase-04-build-06-query-callback-lifecycle`:
     - added callback-lifecycle regression coverage for repeated author-filtered queries
     - replaced accumulating `posts_pre_query` callback behavior with a self-removing one-shot callback
+    - re-verified `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
+  - `04-Build-07` executed on `codex/phase-04-build-07-user-deletion-sync`:
+    - added sole-author, guest-author, invalid/self reassignment, and multisite deletion coverage
+    - verified groundwork deletion-sync implementation without production-code changes
     - re-verified `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`
   - `04-Build-08` plan created and queued for attribution lifecycle observability hooks using `docs/audit/authorship-observability-hook-contract.md`
   - Canonical execution board is `.planning/phases/04-test-depth-and-ratcheting-authorship/04-execution-board.md`
   - Cross-site attribution contract for Phase 04 is REST-only and default site-local; explicit network mode remains filter-controlled (`authorship_cross_site_mode`)
   - Widening cross-site mode beyond REST is tracked as backlog follow-up, not in current Phase 04 execution scope
   - Security and audit model is complementary-plugin-first: WP Sudo handles reauthentication/gating and Stream/WSAL-style plugins handle persistent audit trails; Authorship focuses on emitting stable hooks
-  - Next explicit execution slice is `04-Build-05`
-  - Phase 04 execution priority is `04-Build-05` through `04-Build-07`, then `04-Build-01` and `04-Build-02`, then `04-Build-08`
+  - Next explicit execution slice is `04-Build-01`
+  - Phase 04 execution priority is `04-Build-01` and `04-Build-02`, then `04-Build-08`
   - Further Phase 04 work should continue only through explicit build-scoped branches/PRs
 - Strict fork-first upstream policy centralized at `docs/fork-first-policy.md`.
 - Upstream PR hygiene completed on 2026-03-08: superseded HM PRs `#160`, `#161`, and `#167`-`#172` closed; maintained open packaging set is `#162`-`#165`.
@@ -99,8 +104,8 @@ Residual risk notes:
 - Coverage ratchet is intentionally conservative at 63% pending Phase 04 incremental raises.
 
 ## Next step
-- Continue Phase 04 only through explicit build-scoped branches/PRs; `04-Build-05` remains the next slice, followed by `04-Build-07`.
-- Blocker-remediation lane is now `04-Build-05` and `04-Build-07`; keep `04-Build-01` and `04-Build-02` queued behind it.
+- Continue Phase 04 only through explicit build-scoped branches/PRs; `04-Build-01` is the next slice.
+- Blocker-remediation lane is closed through `04-Build-07`; proceed with `04-Build-01`, then `04-Build-02`.
 - Keep `04-Build-08` queued as the next interoperability slice after blocker and quality lanes complete.
 - Keep explicit network mode scoped to REST in Phase 04; treat non-REST widening as backlog unless reprioritized.
 - Keep audit/reauth strategy integration-first: prioritize hook contract coverage for Stream/WSAL compatibility and avoid planning a first-party audit datastore in Authorship.

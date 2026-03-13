@@ -10,8 +10,12 @@ declare( strict_types=1 );
 namespace Authorship\Tests;
 
 use const Authorship\POSTS_PARAM;
+use const Authorship\TAXONOMY;
 
+use function Authorship\action_deleted_user;
+use function Authorship\init_taxonomy;
 use function Authorship\get_author_ids;
+use function Authorship\sync_deleted_user_authorship_for_current_site;
 
 /**
  * @group ms-required
@@ -123,6 +127,79 @@ class TestMultisite extends TestCase {
 
 		try {
 			$this->assertSame( [ self::$users['admin']->ID ], get_author_ids( $post ) );
+		} finally {
+			restore_current_blog();
+		}
+	}
+
+	public function testDeletedUserActionWithReassignUpdatesAuthorshipAcrossSubsites() : void {
+		$cross_site_author = self::factory()->user->create_and_get( [
+			'role'         => 'author',
+			'display_name' => 'Network Deleted Reassigned Author',
+			'user_email'   => 'network-deleted-reassigned-author@example.org',
+		] );
+
+		$main_site_post = self::factory()->post->create_and_get( [
+			'post_author' => self::$users['admin']->ID,
+			POSTS_PARAM   => [
+				$cross_site_author->ID,
+				self::$users['admin']->ID,
+			],
+		] );
+
+		switch_to_blog( self::$sub_site->blog_id );
+		$this->set_permalink_structure( '/%year%/%monthnum%/%day%/%postname%/' );
+
+		try {
+			$subsite_post = self::factory()->post->create_and_get( [
+				'post_author' => self::$users['admin']->ID,
+				POSTS_PARAM   => [
+					self::$users['author']->ID,
+					$cross_site_author->ID,
+				],
+			] );
+		} finally {
+			restore_current_blog();
+		}
+
+		action_deleted_user( $cross_site_author->ID, self::$users['editor']->ID, $cross_site_author );
+
+		$this->assertSame( [ self::$users['editor']->ID, self::$users['admin']->ID ], get_author_ids( $main_site_post ) );
+
+		switch_to_blog( self::$sub_site->blog_id );
+		try {
+			$this->assertSame( [ self::$users['author']->ID, self::$users['editor']->ID ], get_author_ids( $subsite_post ) );
+		} finally {
+			restore_current_blog();
+		}
+	}
+
+	public function testDeletedUserSyncSkipsMissingTaxonomyGracefully() : void {
+		$deleted_user = self::factory()->user->create_and_get( [
+			'role'         => 'author',
+			'display_name' => 'Missing Taxonomy Author',
+			'user_email'   => 'missing-taxonomy-author@example.org',
+		] );
+
+		switch_to_blog( self::$sub_site->blog_id );
+		$this->set_permalink_structure( '/%year%/%monthnum%/%day%/%postname%/' );
+
+		try {
+			$post = self::factory()->post->create_and_get( [
+				'post_author' => self::$users['admin']->ID,
+				POSTS_PARAM   => [
+					$deleted_user->ID,
+					self::$users['editor']->ID,
+				],
+			] );
+
+			unregister_taxonomy( TAXONOMY );
+
+			sync_deleted_user_authorship_for_current_site( $deleted_user->ID, 0 );
+
+			init_taxonomy();
+
+			$this->assertSame( [ $deleted_user->ID, self::$users['editor']->ID ], get_author_ids( $post ) );
 		} finally {
 			restore_current_blog();
 		}
