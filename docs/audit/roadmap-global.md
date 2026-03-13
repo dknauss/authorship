@@ -160,6 +160,12 @@ Submit all four PRs at the same time, after `02-Build-13` is complete. Reference
 - PR C (CLI migration improvements): https://github.com/humanmade/authorship/pull/164
 - PR D (editor asset fix): https://github.com/humanmade/authorship/pull/165
 
+### Narrow follow-up record (2026-03-13)
+- Draft HM PR `#176`: query callback lifecycle cleanup from `codex/hm-author-query-callback-cleanup`
+- Draft HM PR `#177`: guest-author username collision hardening from `codex/hm-guest-author-collision-fix`
+- Prepared but not submitted: editor `useEffect` lifecycle fix on `codex/hm-editor-useeffect-fix`
+- No submission needed: implicit author-query supported-post-type fix is already present on current `upstream/develop`
+
 ### After submission
 - Tag `codex/restack-audit-queue` at the submission point.
 - Continue fork-local work on a new branch for Phase 03.
@@ -385,9 +391,13 @@ Items are ordered by impact and urgency. Phase assignments indicate when each it
   - `#163` guest author + post-insert hardening
   - `#164` CLI migration improvements
   - `#165` editor asset fix
+  - `#176` query callback lifecycle cleanup (draft)
+  - `#177` guest-author username collision hardening (draft)
   - Umbrella issue: `#166`
 - Upstream hygiene state:
   - superseded HM PRs `#160`, `#161`, and `#167`-`#172` were closed on 2026-03-08 to enforce strict fork-first scope discipline
+  - editor `useEffect` lifecycle fix is prepared locally but intentionally not yet submitted
+  - implicit author-query supported-post-type fix no longer requires an upstream branch because equivalent behavior is already on `upstream/develop`
 - Quality state: `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`, `composer test:coverage`, and `npm run test:js:coverage` are all green.
 - PHPUnit coverage state: threshold ratcheted to `63%`; latest recorded statement coverage was `65.51%` (`625/954`). Current PHPUnit totals are tracked in `docs/current-metrics.md`.
 - JS coverage state (`npm run test:js:coverage`): statements `82.06%`, branches `59.37%`, functions `74.35%`, lines `81.95%` against enforced thresholds (80/55/70/80).

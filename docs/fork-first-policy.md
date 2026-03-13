@@ -34,3 +34,9 @@ Effective date: 2026-03-08
 - `#163` Guest author + observability hardening
 - `#164` CLI migration reliability
 - `#165` Editor asset fix
+- Draft HM PR `#176` Query callback lifecycle cleanup
+- Draft HM PR `#177` Guest-author username collision hardening
+
+Tracking note:
+- `codex/hm-editor-useeffect-fix` is prepared locally as the next narrow upstream candidate, but not yet submitted.
+- No upstream PR is needed for the implicit author-query supported-post-type fix because current `upstream/develop` already contains equivalent behavior and regression coverage.

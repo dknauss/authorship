@@ -60,6 +60,11 @@ See also: [Global Roadmap](roadmap-global.md) for project-wide purpose, history,
   - Further Phase 04 work should continue only through explicit build-scoped branches/PRs
 - Strict fork-first upstream policy centralized at `docs/fork-first-policy.md`.
 - Upstream PR hygiene completed on 2026-03-08: superseded HM PRs `#160`, `#161`, and `#167`-`#172` closed; maintained open packaging set is `#162`-`#165`.
+- Narrow upstream follow-up status updated on 2026-03-13:
+  - draft HM PR `#176` opened for query callback lifecycle cleanup
+  - draft HM PR `#177` opened for guest-author username collision hardening
+  - editor `useEffect` lifecycle fix remains prepared on `codex/hm-editor-useeffect-fix` but not submitted
+  - implicit author-query supported-post-type fix requires no PR because equivalent behavior is already on current `upstream/develop`
 
 ## What Phase 01 established
 - Root standards configuration already exists and is not missing.
