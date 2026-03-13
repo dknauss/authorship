@@ -107,6 +107,7 @@ Or, if your project uses Composer with a VCS repository:
 * Install the dependencies:
   `composer install && npm install`
 * If you run integration tests, set credentials in `tests/.env` (copy `tests/.env.dist` first if needed)
+* For repo-owned local browser/manual environments (`wp-env` single-site, `wp-env` multisite, and Playground), see [docs/testing-environments.md](docs/testing-environments.md)
 * Start the dev server:
   `npm run start`
 
