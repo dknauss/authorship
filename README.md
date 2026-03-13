@@ -4,7 +4,7 @@ A modern approach to author attribution in WordPress.
 
 This repository (`dknauss/authorship`) is the active fork of [humanmade/authorship](https://github.com/humanmade/authorship) and is operated with a fork-first workflow.
 
-**Stable tag: 0.2.17**
+**Stable tag: 0.3.0-alpha**
 
 ## Project Status
 

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Authorship is a WordPress plugin for multi-author and guest-author attribution. It supports multiple authors per post, guest authors backed by real WordPress user accounts, block editor integration, REST API and WP-CLI support. This is an active fork (`dknauss/authorship`) from the original Human Made project.
 
-**Version:** 0.2.17
+**Version:** 0.3.0-alpha
 **Requirements:** WordPress 5.4+, PHP 7.2+, Node 20+
 
 ## Commands
