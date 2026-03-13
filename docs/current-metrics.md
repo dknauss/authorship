@@ -9,8 +9,8 @@ Verification environment: local repo checkout at `/Users/danknauss/Documents/Git
 
 | Metric | Value | Verification |
 |---|---:|---|
-| PHPUnit tests | 211 tests | `composer test:ut` |
-| PHPUnit assertions | 1,517 assertions | `composer test:ut` |
+| PHPUnit tests | 207 tests | `composer test:ut` |
+| PHPUnit assertions | 1,505 assertions | `composer test:ut` |
 | Jest test suites | 4 suites | `npm run test:js -- --ci` |
 | Jest tests | 24 tests | `npm run test:js -- --ci` |
 | PHP coverage threshold | 63% | `tests/phpunit/includes/check-coverage-threshold.php` |
@@ -20,11 +20,11 @@ Verification environment: local repo checkout at `/Users/danknauss/Documents/Git
 
 | Metric | Value | Verification |
 |---|---:|---|
-| Production PHP lines (`inc/` + `plugin.php`) | 2,923 | `find ./inc -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` + `wc -l plugin.php` |
-| Test PHP lines (`tests/phpunit/`) | 4,973 | `find ./tests/phpunit -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` |
+| Production PHP lines (`inc/` + `plugin.php`) | 2,730 | `find ./inc -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` + `wc -l plugin.php` |
+| Test PHP lines (`tests/phpunit/`) | 4,840 | `find ./tests/phpunit -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` |
 | JS/TS source lines (`src/`) | 766 | `find ./src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.scss" \) -print0 \| xargs -0 wc -l \| tail -1` |
 | JS test lines (`tests/js/`) | 799 | `find ./tests/js -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" \) -print0 \| xargs -0 wc -l \| tail -1` |
-| Test-to-production ratio (PHP) | 1.70:1 | `4973 / 2923` |
+| Test-to-production ratio (PHP) | 1.77:1 | `4840 / 2730` |
 
 ## Architectural Facts
 
