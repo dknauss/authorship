@@ -61,4 +61,36 @@ class TestArchive extends TestCase {
 
 		$this->assertSame( self::$users['editor']->display_name, $title );
 	}
+
+	public function testAuthorArchiveIncludesSupportedPageContent() : void {
+		$factory = self::factory()->post;
+
+		$yes_post = $factory->create_and_get( [
+			'post_author' => self::$users['admin']->ID,
+			POSTS_PARAM   => [
+				self::$users['editor']->ID,
+			],
+		] );
+
+		$yes_page = $factory->create_and_get( [
+			'post_type'   => 'page',
+			'post_author' => self::$users['admin']->ID,
+			POSTS_PARAM   => [
+				self::$users['editor']->ID,
+			],
+		] );
+
+		$this->go_to( get_author_posts_url( self::$users['editor']->ID ) );
+
+		/** @var \WP_Query */
+		global $wp_query;
+
+		$actual_ids = wp_list_pluck( $wp_query->posts, 'ID' );
+		sort( $actual_ids );
+
+		$expected_ids = [ $yes_post->ID, $yes_page->ID ];
+		sort( $expected_ids );
+
+		$this->assertSame( $expected_ids, $actual_ids );
+	}
 }

@@ -862,10 +862,13 @@ function action_pre_get_posts( WP_Query $query ) : void {
 	$supported_post_types = get_supported_post_types();
 
 	if ( empty( $post_type ) ) {
-		$post_type = 'post';
-	}
+		if ( empty( $supported_post_types ) ) {
+			return;
+		}
 
-	if ( 'any' === $post_type ) {
+		$post_type = $supported_post_types;
+		$query->set( 'post_type', $post_type );
+	} elseif ( 'any' === $post_type ) {
 		$post_type = $supported_post_types;
 		$query->set( 'post_type', $post_type );
 	} else {
@@ -882,8 +885,8 @@ function action_pre_get_posts( WP_Query $query ) : void {
 			// so narrow author-filtered queries to the supported set explicitly.
 			$post_type = $matching_post_types;
 			$query->set( 'post_type', $post_type );
-		}
-	}
+		}//end if
+	}//end if
 
 	// Remove the author query vars now that we've confirmed this query needs rewriting.
 	foreach ( $concerns as $concern => $concern_default_value ) {

@@ -72,6 +72,9 @@ Fix omitted-`post_type` author-query behavior so supported post types and archiv
 Planned on 2026-03-08.
 
 Execution state:
-- Explicit Build-05 execution not started.
-- Groundwork commit `380ba2c` already changed `action_pre_get_posts()` for `post_type=any` and mixed supported/unsupported author queries; this build remains responsible for omitted-`post_type` semantics, regression coverage, and documentation.
+- Executed on 2026-03-12 on `codex/phase-04-build-05-author-query-post-type-clean`.
+- Added omitted-`post_type` regression coverage in `tests/phpunit/test-wp-query.php` for both `author` and `author_name` queries including supported `post` and `page` content.
+- Added archive-level regression coverage in `tests/phpunit/test-archive.php` confirming supported `page` content appears in author archives.
+- Updated `action_pre_get_posts()` in `inc/namespace.php` to resolve omitted `post_type` to supported post types instead of defaulting to `post`.
+- Verification gates passed: `composer test:integration`, `WP_MULTISITE=1 composer test:integration`, `composer analyse:phpstan`, `composer analyse:psalm`, `composer lint`.
 </status>
