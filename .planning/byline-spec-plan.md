@@ -1,5 +1,7 @@
 # Byline Spec Assessment and Implementation Plan
 
+> **Status (2026-03-13):** Phase 1 was implemented as `inc/byline-feed.php` inside the Authorship fork, then extracted to a standalone companion plugin scope. The implementation is preserved on the `byline-feed` branch and will move to its own repository. This plan remains valid as the design document for the **companion plugin**, not the Authorship fork. The fork's role is to provide clean public API functions (`get_authors()`, `get_author_ids()`, WordPress role data) that the companion consumes through an adapter pattern — the same pattern used for Co-Authors Plus and PublishPress Authors compatibility.
+
 ## What is Byline?
 
 Byline (bylinespec.org) is an open specification (v0.1.0, January 2026, CC0 licensed) that extends RSS 2.0, Atom, and JSON Feed with structured author identity, context, and content perspective metadata. It was created by Terry Godier to address "content collapse" — the loss of context when diverse content sources arrive in a unified feed reader stream.
@@ -60,9 +62,9 @@ This only handles RSS2, not Atom. It only outputs a plain-text name list. No str
 
 ## Implementation plan
 
-### Recommended approach: companion module
+### Recommended approach: standalone companion plugin
 
-Implement as a separate file (`inc/byline-feed.php`) conditionally loaded in `plugin.php`, or as an independent companion plugin. This keeps the core lean and lets the Byline implementation evolve independently.
+**Decision (2026-03-13):** Implement as an independent companion plugin in its own repository. The Authorship fork focuses on core multi-author data (taxonomy, guest authors, capabilities, REST API). The byline-feed plugin consumes it through an adapter pattern, same as it does for Co-Authors Plus and PublishPress Authors. Phase 1 code is preserved on the `byline-feed` branch.
 
 ### Phase 1: structural elements (data already available)
 

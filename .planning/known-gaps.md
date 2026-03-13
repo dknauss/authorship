@@ -97,16 +97,16 @@ Upstream `AuthorsSelect.tsx` performs state initialization and can trigger `apiF
 
 ## Feed output limitations
 
-**Status:** Open — feed gaps remain. Byline spec implementation planned (see below). Schema.org HTML output added as P2 backlog item.
+**Status:** Partially resolved. Core multi-author name attribution now works in both RSS2 and Atom feeds. Structured feed metadata (Byline spec) extracted to companion plugin scope.
 
-- RSS2: outputs comma-separated name list only via `the_author` filter. No structured metadata.
-- Atom: no Authorship-specific handling at all.
+- RSS2: outputs comma-separated name list via `the_author` filter. ✅ Working.
+- Atom: outputs comma-separated name list via `the_author` filter. ✅ Fixed 2026-03-13 (`is_feed()` broadening in `filter_the_author_for_rss`).
 - JSON Feed: not addressed.
-- No `dc:creator` output for individual co-authors.
+- No `dc:creator` output for individual co-authors (RSS2 uses a single element with comma-separated names).
 - No Schema.org / JSON-LD author metadata in feeds.
 - No Schema.org / JSON-LD author markup in HTML output (for SEO). This is a separate concern from feed metadata — PublishPress Authors (Pro) and Molongui both provide this. See `docs/audit/roadmap-global.md` backlog #19.
 
-See `.planning/byline-spec-plan.md` for the proposed Byline spec implementation that would address structured feed output.
+Structured feed output (Byline spec namespace, per-author refs, role mapping) was implemented as `inc/byline-feed.php` and then extracted to a standalone companion plugin. See `.planning/byline-spec-plan.md` for the spec assessment; the implementation now lives on the `byline-feed` branch and will move to its own repository. The fork's responsibility is providing clean public API functions (`get_authors()`, `get_author_ids()`, role constants) that the companion consumes through an adapter pattern.
 
 ## Compatibility
 

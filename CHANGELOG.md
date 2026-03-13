@@ -6,6 +6,32 @@ Scope notes:
 - Baseline upstream branch: `humanmade/authorship` `develop`
 - This file tracks fork-local delivery history and coordination milestones.
 
+## 2026-03-13
+
+### Added
+- Test coverage expansion: 34 new tests across three areas:
+  - `arrayMove.ts` utility (8 Jest tests)
+  - `InsertPostHandler` class (9 PHPUnit tests)
+  - Multisite workflow scenarios (8 PHPUnit tests, `@group ms-required`)
+- Atom feed test (`test-feed-atom.php`) verifying multi-author name attribution.
+
+### Changed
+- **Editor UX:** Replaced oversized author avatar cards with compact chip/pill design in block editor sidebar.
+- **Atom feed fix:** `filter_the_author_for_rss` now handles all feed formats (`is_feed()`) instead of only RSS2 (`is_feed('rss2')`).
+- **Byline-feed separation:** Extracted `inc/byline-feed.php` to standalone `byline-feed` branch. Fork focuses on core multi-author data; structured feed output (Byline spec namespace) moves to a companion plugin consuming Authorship through an adapter pattern.
+- Updated planning docs to reflect byline-feed extraction:
+  - `.planning/byline-spec-plan.md` — reclassified as companion plugin design doc
+  - `.planning/known-gaps.md` — feed section updated (RSS2 ✅, Atom ✅, structured output → companion)
+  - `.planning/README.md` — "Planned enhancements" → "Companion project plans"
+  - `.planning/STATE.md` — current build state and recent work
+  - `04-execution-board.md` — reconciled PR/merge statuses for Builds 05-07
+  - `README.md` — Atom feeds marked complete
+
+### Coordination
+- Reviewed upstream draft PRs #175, #176, #177 — all solid.
+- Cleaned up 25 stale local branches; retained 3 active upstream PR branches + develop.
+- Pushed `byline-feed` branch to remote for companion plugin development.
+
 ## 2026-03-08
 
 ### Added

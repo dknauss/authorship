@@ -83,7 +83,7 @@ Fork development history is tracked in `CHANGELOG.md`.
 * [ ] Works with the classic editor
 * [X] Full CRUD support in the REST API and WP-CLI
 * [X] Full support in RSS feeds
-* [ ] Full support in Atom feeds
+* [X] Full support in Atom feeds
 * [X] Fine-grained user permission controls
 
 _Features without a checkmark are still work in progress._

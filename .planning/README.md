@@ -11,9 +11,9 @@ Technical documentation for the Authorship fork. These documents cover the upstr
 
 - **[Multi-Author Plugin Landscape](landscape.md)** — Comparison of Co-Authors Plus, PublishPress Authors, Molongui Authorship, WP Post Author, Simple Author Box, and Authorship. Includes active install counts from wp.org (March 2026), architectural approaches, feature comparison matrix, and historical lineage from Mark Jaquith's 2005 "Multiple Authors" through the present.
 
-## Planned enhancements
+## Companion project plans
 
-- **[Byline Spec Assessment and Implementation Plan](byline-spec-plan.md)** — Analysis of the Byline open specification (bylinespec.org) for structured author identity in syndication feeds. Includes mapping from Authorship's data model to Byline elements, phased implementation plan, and strategic considerations for early adoption.
+- **[Byline Spec Assessment and Implementation Plan](byline-spec-plan.md)** — Analysis of the Byline open specification (bylinespec.org) for structured author identity in syndication feeds. Includes mapping from Authorship's data model to Byline elements, phased implementation plan, and strategic considerations for early adoption. **Note (2026-03-13):** This plan now applies to a standalone companion plugin, not the Authorship fork. Phase 1 code is preserved on the `byline-feed` branch.
 
 ## Quality and security
 
