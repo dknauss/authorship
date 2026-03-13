@@ -95,7 +95,7 @@ function is_post_type_supported( string $post_type ) : bool {
  * @return string|null The author's display name.
  */
 function filter_the_author_for_rss( ?string $display_name ) : ?string {
-	if ( ! is_feed( 'rss2' ) ) {
+	if ( ! is_feed() ) {
 		return $display_name;
 	}
 

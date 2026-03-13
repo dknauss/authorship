@@ -45,6 +45,7 @@ require_once __DIR__ . '/inc/taxonomy.php';
 require_once __DIR__ . '/inc/class-users-controller.php';
 require_once __DIR__ . '/inc/class-insert-post-handler.php';
 require_once __DIR__ . '/inc/template.php';
+require_once __DIR__ . '/inc/byline-feed.php';
 
 if ( is_admin() ) {
 	require_once __DIR__ . '/inc/admin.php';
@@ -57,4 +58,5 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	CLI\bootstrap();
 }
 
+BylineFeed\bootstrap();
 bootstrap();

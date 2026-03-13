@@ -1,6 +1,6 @@
 <?php
 /**
- * RSS2 tests.
+ * Atom feed tests.
  *
  * @package authorship
  */
@@ -13,7 +13,7 @@ use function Authorship\BylineFeed\get_person_id;
 
 use const Authorship\POSTS_PARAM;
 
-class TestRSS2 extends FeedTestCase {
+class TestAtom extends FeedTestCase {
 	public function testMultipleAuthorNamesAndBylineNamespace() : void {
 		$factory = self::factory()->post;
 
@@ -26,12 +26,12 @@ class TestRSS2 extends FeedTestCase {
 			],
 		] );
 
-		$raw  = $this->get_raw_feed( '/?feed=rss2' );
+		$raw  = $this->get_raw_feed( '/?feed=atom' );
 		$feed = xml_to_array( $raw );
 
-		// Multi-author names in dc:creator.
-		$items  = xml_find( $feed, 'rss', 'channel', 'item' );
-		$author = xml_find( $items[0]['child'], 'dc:creator' );
+		// Multi-author name in <author><name>.
+		$entries = xml_find( $feed, 'feed', 'entry' );
+		$author  = xml_find( $entries[0]['child'], 'author', 'name' );
 
 		$expected = sprintf(
 			'%1$s, %2$s',
@@ -45,14 +45,7 @@ class TestRSS2 extends FeedTestCase {
 		// Byline namespace declaration.
 		$this->assertStringContainsString( 'xmlns:byline="https://bylinespec.org/1.0"', $raw );
 
-		// Byline contributors block.
-		$this->assertStringContainsString( '<byline:contributors>', $raw );
-		$this->assertStringContainsString(
-			'<byline:name>' . esc_html( self::$users['editor']->display_name ) . '</byline:name>',
-			$raw
-		);
-
-		// Byline author refs in item.
+		// Byline author refs in entry.
 		$editor_id = get_person_id( self::$users['editor'] );
 		$author_id = get_person_id( self::$users['author'] );
 
