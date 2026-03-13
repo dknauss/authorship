@@ -2,17 +2,17 @@
 
 This file is the single source of truth for current repository counts.
 
-Last verified: 2026-03-12
+Last verified: 2026-03-13
 Verification environment: local repo checkout at `/Users/danknauss/Documents/GitHub/authorship`
 
 ## Test Metrics
 
 | Metric | Value | Verification |
 |---|---:|---|
-| PHPUnit tests | 185 tests | `composer test:ut` |
-| PHPUnit assertions | 1,478 assertions | `composer test:ut` |
-| Jest test suites | 3 suites | `npm run test:js -- --ci` |
-| Jest tests | 16 tests | `npm run test:js -- --ci` |
+| PHPUnit tests | 211 tests | `composer test:ut` |
+| PHPUnit assertions | 1,517 assertions | `composer test:ut` |
+| Jest test suites | 4 suites | `npm run test:js -- --ci` |
+| Jest tests | 24 tests | `npm run test:js -- --ci` |
 | PHP coverage threshold | 63% | `tests/phpunit/includes/check-coverage-threshold.php` |
 | JS coverage thresholds | 80% lines, 80% statements, 70% functions, 55% branches | `package.json test:js:coverage` |
 
@@ -20,11 +20,11 @@ Verification environment: local repo checkout at `/Users/danknauss/Documents/Git
 
 | Metric | Value | Verification |
 |---|---:|---|
-| Production PHP lines (`inc/` + `plugin.php`) | 2,719 | `find ./inc -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` + `wc -l plugin.php` |
-| Test PHP lines (`tests/phpunit/`) | 4,248 | `find ./tests/phpunit -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` |
+| Production PHP lines (`inc/` + `plugin.php`) | 2,923 | `find ./inc -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` + `wc -l plugin.php` |
+| Test PHP lines (`tests/phpunit/`) | 4,973 | `find ./tests/phpunit -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` |
 | JS/TS source lines (`src/`) | 766 | `find ./src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.scss" \) -print0 \| xargs -0 wc -l \| tail -1` |
-| JS test lines (`tests/js/`) | 761 | `find ./tests/js -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" \) -print0 \| xargs -0 wc -l \| tail -1` |
-| Test-to-production ratio (PHP) | 1.56:1 | `4248 / 2719` |
+| JS test lines (`tests/js/`) | 799 | `find ./tests/js -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" \) -print0 \| xargs -0 wc -l \| tail -1` |
+| Test-to-production ratio (PHP) | 1.70:1 | `4973 / 2923` |
 
 ## Architectural Facts
 
@@ -61,9 +61,9 @@ Source: `.github/workflows/`
 
 ## Verification Notes
 
-- LOC counts verified on `develop` on 2026-03-12.
-- `composer test:ut` passed on 2026-03-12 (185 tests, 1478 assertions).
-- `npm run test:js -- --ci` passed on 2026-03-12 (3 suites, 16 tests).
+- LOC counts verified on `develop` on 2026-03-13.
+- `composer test:ut` passed on 2026-03-13 (211 tests, 1517 assertions).
+- `npm run test:js -- --ci` passed on 2026-03-13 (4 suites, 24 tests).
 - `composer analyse:phpstan` passed on 2026-03-09.
 
 ## Verification Script
