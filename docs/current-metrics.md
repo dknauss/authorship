@@ -2,7 +2,7 @@
 
 This file is the single source of truth for current repository counts.
 
-Last verified: 2026-03-13
+Last verified: 2026-03-15
 Verification environment: local repo checkout at `/Users/danknauss/Documents/GitHub/authorship`
 
 ## Test Metrics
@@ -20,11 +20,11 @@ Verification environment: local repo checkout at `/Users/danknauss/Documents/Git
 
 | Metric | Value | Verification |
 |---|---:|---|
-| Production PHP lines (`inc/` + `plugin.php`) | 2,757 | `find ./inc -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` + `wc -l plugin.php` |
-| Test PHP lines (`tests/phpunit/`) | 5,208 | `find ./tests/phpunit -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` |
+| Production PHP lines (`inc/` + `plugin.php`) | 2,849 | `find ./inc -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` + `wc -l plugin.php` |
+| Test PHP lines (`tests/phpunit/`) | 5,573 | `find ./tests/phpunit -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` |
 | JS/TS source lines (`src/`) | 766 | `find ./src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.scss" \) -print0 \| xargs -0 wc -l \| tail -1` |
 | JS test lines (`tests/js/`) | 799 | `find ./tests/js -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" \) -print0 \| xargs -0 wc -l \| tail -1` |
-| Test-to-production ratio (PHP) | 1.89:1 | `5208 / 2757` |
+| Test-to-production ratio (PHP) | 1.96:1 | `5573 / 2849` |
 
 ## Architectural Facts
 
@@ -61,11 +61,12 @@ Source: `.github/workflows/`
 
 ## Verification Notes
 
-- LOC counts verified on `develop` on 2026-03-13.
-- `composer test:ut` passed on 2026-03-15 (227 tests, 1549 assertions).
+- LOC counts verified on `develop` on 2026-03-15.
+- `composer test:ut` passed on 2026-03-15: single-site 224 tests/1563 assertions, multisite 240 tests (4 pre-existing REST multisite failures).
 - `npm run test:js -- --ci` passed on 2026-03-15 (4 suites, 24 tests).
 - `composer analyse:phpstan` passed on 2026-03-15.
 - Psalm baseline reduced from 339 to 328 lines on 2026-03-15 (removed 5 UnnecessaryVarAnnotation + InvalidReturn entries).
+- Coverage: 70.15% statement coverage (gate: 67%).
 
 ## Verification Script
 

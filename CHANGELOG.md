@@ -9,6 +9,11 @@ Scope notes:
 ## 2026-03-15
 
 ### Added
+- Attribution lifecycle hook contract (Build-08):
+  - `authorship_set_authors_before`, `authorship_set_authors_after`, `authorship_set_authors_failed` hooks in `set_authors()` with normalized `$context` array (`source`, `operation`, `actor_user_id`).
+  - `authorship_deleted_user_sync_post_updated`, `authorship_deleted_user_sync_post_failed`, `authorship_deleted_user_sync_completed` hooks in user-deletion sync.
+  - 13 contract tests across `test-post-saving.php` (7), `test-user-deletion.php` (4), `test-cli.php` (2).
+  - Hook contract specification: `docs/audit/authorship-observability-hook-contract.md`.
 - 15 hook/filter contract tests (`test-hook-filter-contracts.php`) covering:
   - `authorship_supported_post_types` filter (add/exclude)
   - `authorship_default_author` filter (override, empty array)
@@ -19,7 +24,12 @@ Scope notes:
   - `create_guest_authors` and `attribute_post_type` capability mapping
 - Build-01 (multisite + hook/filter coverage) now complete.
 - Guest author login blocking: `filter_authenticate_block_guest_authors()` in `inc/namespace.php` — returns `WP_Error` for pure guest-author accounts at priority 100, with 5 tests covering block, passthrough, null, error, and multi-role cases.
-- 227 PHP tests, 1549 assertions total.
+- 240 PHP tests, ~1,620 assertions total.
+
+### Changed
+- Coverage threshold ratcheting (Build-02): PHP 63% -> 67%, JS functions 70% -> 73%.
+- Psalm baseline reduced from 339 to 328 lines (5 unnecessary annotations removed).
+- Phase 04 complete: all builds (01, 02, 03-07, 08) delivered and locally verified.
 
 ### Fixed
 - **Doc correction:** Guest author login blocking (`authenticate` filter) was never implemented but was erroneously marked "Resolved — Phase 01 Build-02" in `known-gaps.md` and `architecture.md` since `f05a756`. The misattribution occurred because all three adjacent security items were annotated by proximity rather than code verification. Now actually implemented and documented.
