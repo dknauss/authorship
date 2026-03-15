@@ -294,6 +294,10 @@ class TestPostSaving extends TestCase {
 	}
 
 	public function testSetAuthorsAfterDoesNotFireOnFailure() : void {
+		$post = self::factory()->post->create_and_get( [
+			'post_author' => self::$users['admin']->ID,
+		] );
+
 		$after_fired = false;
 
 		$callback = function() use ( &$after_fired ) : void {
@@ -301,10 +305,6 @@ class TestPostSaving extends TestCase {
 		};
 
 		add_action( 'authorship_set_authors_after', $callback, 10, 4 );
-
-		$post = self::factory()->post->create_and_get( [
-			'post_author' => self::$users['admin']->ID,
-		] );
 
 		try {
 			set_authors( $post, [ 999999 ] );
