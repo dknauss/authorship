@@ -160,7 +160,6 @@ function filter_map_meta_cap_for_editing( array $caps, string $cap, int $user_id
 		return $caps;
 	}
 
-	/** @var stdClass */
 	$post_type_cap = $post_type->cap;
 
 	// Remove the following from `$caps`.
@@ -278,7 +277,6 @@ function filter_user_has_cap( array $user_caps, array $required_caps, array $arg
 				break;
 			}
 
-			/** @var stdClass */
 			$post_type_caps = $post_type_object->cap;
 
 			$user_caps[ $cap ] = user_can( $user->ID, $post_type_caps->edit_others_posts );

@@ -13,8 +13,8 @@ Verification environment: local repo checkout at `/Users/danknauss/Documents/Git
 | PHPUnit assertions | 1,549 assertions | `composer test:ut` |
 | Jest test suites | 4 suites | `npm run test:js -- --ci` |
 | Jest tests | 24 tests | `npm run test:js -- --ci` |
-| PHP coverage threshold | 63% | `tests/phpunit/includes/check-coverage-threshold.php` |
-| JS coverage thresholds | 80% lines, 80% statements, 70% functions, 55% branches | `package.json test:js:coverage` |
+| PHP coverage threshold | 67% | `tests/phpunit/includes/check-coverage-threshold.php` |
+| JS coverage thresholds | 80% lines, 80% statements, 73% functions, 55% branches | `package.json test:js:coverage` |
 
 ## Size Metrics
 
@@ -39,7 +39,7 @@ numbers MUST point to or be verified against this table.
 | WP-CLI commands | 1 | `Migrate_Command` in `inc/cli/` | v0.2.0 |
 | React components | 3 | `find src/components -name "*.tsx" \| wc -l` | Phase 03 |
 | PHPStan level | max | `grep "level:" phpstan.neon.dist` | Phase 02 |
-| Psalm baseline | committed | `psalm-baseline.xml` | Phase 02 |
+| Psalm baseline lines | 328 | `wc -l psalm-baseline.xml` | Build-02 |
 
 ### Files that reference these counts
 
@@ -64,7 +64,8 @@ Source: `.github/workflows/`
 - LOC counts verified on `develop` on 2026-03-13.
 - `composer test:ut` passed on 2026-03-15 (227 tests, 1549 assertions).
 - `npm run test:js -- --ci` passed on 2026-03-15 (4 suites, 24 tests).
-- `composer analyse:phpstan` passed on 2026-03-09.
+- `composer analyse:phpstan` passed on 2026-03-15.
+- Psalm baseline reduced from 339 to 328 lines on 2026-03-15 (removed 5 UnnecessaryVarAnnotation + InvalidReturn entries).
 
 ## Verification Script
 

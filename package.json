@@ -24,7 +24,7 @@
     "playground:start": "wp-playground-cli start --path=. --wp=6.6 --php=8.3 --port=9400",
     "playground:start:reset": "wp-playground-cli start --path=. --reset --wp=6.6 --php=8.3 --port=9400",
     "test:js": "wp-scripts test-unit-js tests/js --runInBand",
-    "test:js:coverage": "wp-scripts test-unit-js tests/js --runInBand --coverage --coverageReporters=text-summary --coverageThreshold=\"{\\\"global\\\":{\\\"branches\\\":55,\\\"functions\\\":70,\\\"lines\\\":80,\\\"statements\\\":80}}\"",
+    "test:js:coverage": "wp-scripts test-unit-js tests/js --runInBand --coverage --coverageReporters=text-summary --coverageThreshold=\"{\\\"global\\\":{\\\"branches\\\":55,\\\"functions\\\":73,\\\"lines\\\":80,\\\"statements\\\":80}}\"",
     "start": "wp-scripts start",
     "build": "wp-scripts build",
     "bump:patch": "bump patch --commit 'The v%s release' package.json package-lock.json README.md plugin.php",

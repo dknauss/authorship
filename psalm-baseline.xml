@@ -123,7 +123,7 @@
       <code><![CDATA[$ppa_user_id]]></code>
     </InvalidReturnStatement>
     <InvalidReturnType>
-      <code><![CDATA[integer]]></code>
+      <code><![CDATA[int]]></code>
     </InvalidReturnType>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$args]]></code>
@@ -135,7 +135,6 @@
       <code><![CDATA[$authorship_authors]]></code>
       <code><![CDATA[$authorship_authors]]></code>
       <code><![CDATA[$pause_seconds]]></code>
-      <code><![CDATA[$ppa_user_id]]></code>
     </MixedAssignment>
     <PossibleRawObjectIteration>
       <code><![CDATA[$ppa_terms]]></code>
@@ -168,9 +167,6 @@
       <code><![CDATA[\Authorship\set_authors( $post, $new_authors )]]></code>
       <code><![CDATA[\Authorship\set_authors( $post, [ intval( $post->post_author ) ] )]]></code>
     </UndefinedFunction>
-    <UnnecessaryVarAnnotation>
-      <code><![CDATA[WP_User|false]]></code>
-    </UnnecessaryVarAnnotation>
     <UnusedClass>
       <code><![CDATA[Migrate_Command]]></code>
     </UnusedClass>
@@ -276,10 +272,6 @@
       <code><![CDATA[set_authors( $post, wp_parse_id_list( $value ) )]]></code>
       <code><![CDATA[user_is_author( $user, $post )]]></code>
     </UndefinedFunction>
-    <UnnecessaryVarAnnotation>
-      <code><![CDATA[stdClass]]></code>
-      <code><![CDATA[stdClass]]></code>
-    </UnnecessaryVarAnnotation>
     <UnresolvableInclude>
       <code><![CDATA[require $asset_file]]></code>
     </UnresolvableInclude>
@@ -319,9 +311,6 @@
       <code><![CDATA[is_post_type_supported( $post->post_type )]]></code>
       <code><![CDATA[is_post_type_supported( $post->post_type )]]></code>
     </UndefinedFunction>
-    <UnnecessaryVarAnnotation>
-      <code><![CDATA[int[]]]></code>
-    </UnnecessaryVarAnnotation>
   </file>
   <file src="lib/asset-loader/asset-loader.php">
     <UnresolvableInclude>

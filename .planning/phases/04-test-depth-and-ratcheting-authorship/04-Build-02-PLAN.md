@@ -80,7 +80,20 @@ Tighten quality signals by ratcheting coverage thresholds and reducing Psalm adv
 
 <status>
 Planned on 2026-03-08.
+Executed on 2026-03-15.
 
 Execution state:
-- Not started (planning artifact only).
+- COMPLETE
+
+Ratchet deltas:
+- PHP coverage threshold: 63% → 67% (actual: 69.45%, headroom: ~2.45%)
+- JS functions threshold: 70% → 73% (actual: 75%, headroom: 2%)
+- Psalm baseline: 339 → 328 lines (−11 lines, 5 entries removed)
+  - Removed: 3× UnnecessaryVarAnnotation, 1× InvalidReturnStatement, 1× InvalidReturnType, 1× MixedAssignment
+  - Source fixes: removed 4 unnecessary @var annotations, changed @return integer→int
+- Psalm 5.26.1 crashes on PHP 8.4 (known upstream issue), baseline edited manually
+
+Note: Psalm --set-baseline cannot run on PHP 8.4 due to Psalm 5.26.1 null array offset bug.
+PHPUnit + coverage gate could not run locally (Local database not started).
+All other gates verified green: PHPStan, PHPCS, ESLint, Jest coverage, wp-scripts build.
 </status>

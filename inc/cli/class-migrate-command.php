@@ -408,7 +408,7 @@ class Migrate_Command extends WP_CLI_Command {
 	 * @param WP_Term $ppa_author The term for the PPA author
 	 * @param boolean $create_users If false no users will be created if they are missing
 	 *
-	 * @return integer a user ID for this term, or -1 if not resolvable
+	 * @return int a user ID for this term, or -1 if not resolvable
 	 */
 	private function get_ppa_user_id( WP_Term $ppa_author, bool $create_users = false ) : int {
 		/**
@@ -426,14 +426,12 @@ class Migrate_Command extends WP_CLI_Command {
 			}
 		}
 
-		/**
+		/*
 		 * Look for an existing user with the same login first.
 		 *
 		 * PublishPress stores the guest-author slug separately from the linked
 		 * WordPress user's nicename, so matching by login avoids duplicate-user
 		 * failures when nicename and login diverge.
-		 *
-		 * @var WP_User|false
 		 */
 		$ppa_user = get_user_by( 'login', $ppa_author->slug );
 
@@ -473,7 +471,7 @@ class Migrate_Command extends WP_CLI_Command {
 			);
 		}
 
-		return $ppa_user_id;
+		return (int) $ppa_user_id;
 	}
 
 	/**

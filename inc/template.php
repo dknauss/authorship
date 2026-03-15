@@ -152,7 +152,6 @@ function set_authors( WP_Post $post, array $authors ) : array {
 		throw new Exception( __( 'This post type does not support authorship.', 'authorship' ) );
 	}
 
-	/** @var int[] $authors */
 	$authors = array_filter( array_map( 'intval', $authors ) );
 
 	/** @var WP_User[] */
