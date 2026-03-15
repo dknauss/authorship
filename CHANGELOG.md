@@ -6,6 +6,22 @@ Scope notes:
 - Baseline upstream branch: `humanmade/authorship` `develop`
 - This file tracks fork-local delivery history and coordination milestones.
 
+## 2026-03-15
+
+### Added
+- 15 hook/filter contract tests (`test-hook-filter-contracts.php`) covering:
+  - `authorship_supported_post_types` filter (add/exclude)
+  - `authorship_default_author` filter (override, empty array)
+  - `authorship_author_assignment_failure` action (argument verification)
+  - Comment notification/moderation recipient filters
+  - `hide_quickedit_authors` quick edit suppression
+  - Guest author role registration and zero-capability enforcement
+  - `create_guest_authors` and `attribute_post_type` capability mapping
+- Build-01 (multisite + hook/filter coverage) now complete: 222 PHP tests, 1540 assertions.
+
+### Fixed
+- **Doc correction:** Guest author login blocking (`authenticate` filter) was never implemented but was erroneously marked "Resolved — Phase 01 Build-02" in `known-gaps.md` and `architecture.md` since `f05a756`. The misattribution occurred because all three adjacent security items were annotated by proximity rather than code verification. Restored to open/recommended status with correction note.
+
 ## 2026-03-13
 
 ### Added
