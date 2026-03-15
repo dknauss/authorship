@@ -23,7 +23,7 @@ Execution hygiene state:
 | `04-Build-05` | Implicit author-query post-type semantics | executed | `codex/phase-04-build-05-author-query-post-type-clean` | Codex, Dan | 2026-03-12 | merged (#21) | Depends on Build-04 |
 | `04-Build-06` | Query callback lifecycle cleanup | executed | `codex/phase-04-build-06-query-callback-lifecycle` | Codex, Dan | 2026-03-12 | merged (#20) | Depends on Build-05 |
 | `04-Build-07` | User deletion sync verification/hardening | executed | `codex/phase-04-build-07-user-deletion-sync` | Codex, Dan | 2026-03-12 | merged (#22) | Closes blocker lane |
-| `04-Build-01` | Multisite + hook/filter coverage expansion | partial | direct to `develop` | Codex, Dan | 2026-03-13 | landed (`1a288ad`) | 8 multisite workflow tests landed; hook/filter contract coverage remaining |
+| `04-Build-01` | Multisite + hook/filter coverage expansion | executed | direct to `develop` | Codex, Dan | 2026-03-15 | landed | 8 multisite workflow tests + 15 hook/filter contract tests |
 | `04-Build-02` | Coverage + Psalm ratcheting | queued | `codex/phase-04-build-02-coverage-psalm-ratchet` | Codex, Dan | TBD | not opened | Quality lane |
 | `04-Build-08` | Observability hook contract implementation | queued | `codex/phase-04-build-08-observability-hooks` | Codex, Dan | TBD | not opened | Execute after quality lane |
 
@@ -46,13 +46,13 @@ Phase 04 is complete only when all are true:
 
 ## 4) Gate baseline snapshot
 
-Latest local baseline run (2026-03-13) on `develop` after byline-feed extraction:
+Latest local baseline run (2026-03-15) on `develop` after Build-01 completion:
 
 | Command | Result | Date | Notes |
 |---|---|---|---|
-| `composer test:ut` | pass (207 tests, 1505 assertions) | 2026-03-13 | Post byline-feed extraction |
-| `composer analyse:phpstan` | pass | 2026-03-13 | No errors |
-| `npm run test:js -- --ci` | pass (4 suites, 24 tests) | 2026-03-13 | Includes arrayMove tests |
+| `composer test:ut` | pass (222 tests, 1540 assertions) | 2026-03-15 | +15 hook/filter contract tests |
+| `composer analyse:phpstan` | pass | 2026-03-15 | No errors |
+| `npm run test:js -- --ci` | pass (4 suites, 24 tests) | 2026-03-15 | Includes arrayMove tests |
 
 ## 5) Blocker escalation rule
 

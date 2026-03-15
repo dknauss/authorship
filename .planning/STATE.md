@@ -3,7 +3,7 @@
 ## Current Position
 
 Phase: 04 (Test Depth and Ratcheting)
-Build: 07 of 08 complete — Build-01 partially addressed, Build-02 and Build-08 queued
+Build: 07 of 08 complete — Build-01 complete, Build-02 and Build-08 queued
 Status: In progress
 Last activity: 2026-03-13
 
@@ -25,7 +25,7 @@ See: `README.md`, `.planning/README.md`
 
 ### Phase 04 Remaining Builds
 
-- **Build-01:** Multisite + hook/filter coverage expansion — partially addressed (8 multisite workflow tests landed 2026-03-13, hook/filter contract coverage still needed)
+- **Build-01:** Multisite + hook/filter coverage expansion — complete (8 multisite workflow tests + 15 hook/filter contract tests)
 - **Build-02:** Coverage + Psalm ratcheting (queued)
 - **Build-08:** Observability hook contract implementation (queued)
 
@@ -56,5 +56,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-13
-Stopped at: Byline-feed extracted; doc updates in progress; Build-01 partially addressed (multisite tests landed, hook coverage remaining)
-Current metrics: See `docs/current-metrics.md` (207 PHP tests, 24 JS tests, 2,730 prod PHP LOC)
+Stopped at: Build-01 complete; Build-02 and Build-08 queued
+Current metrics: See `docs/current-metrics.md` (222 PHP tests, 24 JS tests, 2,730 prod PHP LOC)
