@@ -798,6 +798,64 @@ class TestCLI extends TestCase {
 		$this->assertEmpty( $ppa_events );
 	}
 
+	public function testDryRunDoesNotEmitSetAuthorsAfterHook() : void {
+		$factory = self::factory()->post;
+
+		$post = $factory->create_and_get( [
+			'post_author' => self::$users['editor']->ID,
+		] );
+
+		wp_set_post_terms( $post->ID, [], TAXONOMY );
+
+		$after_fired = false;
+
+		$callback = function() use ( &$after_fired ) : void {
+			$after_fired = true;
+		};
+
+		add_action( 'authorship_set_authors_after', $callback, 10, 4 );
+
+		$command = new CLI\Migrate_Command();
+		$command->wp_authors( [], [
+			'dry-run' => true,
+			'post-type' => 'post',
+			'batch-pause' => '0',
+		] );
+
+		remove_action( 'authorship_set_authors_after', $callback, 10 );
+
+		$this->assertFalse( $after_fired, 'Dry-run mode must not emit authorship_set_authors_after hook.' );
+	}
+
+	public function testSetAuthorsAfterHookFiresDuringWpAuthorsWrite() : void {
+		$factory = self::factory()->post;
+
+		$post = $factory->create_and_get( [
+			'post_author' => self::$users['editor']->ID,
+		] );
+
+		wp_set_post_terms( $post->ID, [], TAXONOMY );
+
+		$fired = [];
+
+		$callback = function( \WP_Post $p, array $prev, array $new_ids, array $context ) use ( &$fired ) : void {
+			$fired[] = compact( 'prev', 'new_ids', 'context' );
+		};
+
+		add_action( 'authorship_set_authors_after', $callback, 10, 4 );
+
+		$command = new CLI\Migrate_Command();
+		$command->wp_authors( [], [
+			'dry-run' => false,
+			'post-type' => 'post',
+			'batch-pause' => '0',
+		] );
+
+		remove_action( 'authorship_set_authors_after', $callback, 10 );
+
+		$this->assertGreaterThanOrEqual( 1, count( $fired ), 'Write mode must emit authorship_set_authors_after hook.' );
+	}
+
 	/**
 	 * Capture pause-resolution action payloads.
 	 *

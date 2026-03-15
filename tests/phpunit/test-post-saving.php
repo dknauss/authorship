@@ -13,6 +13,7 @@ use const Authorship\POSTS_PARAM;
 use const Authorship\TAXONOMY;
 
 use function Authorship\get_authors;
+use function Authorship\set_authors;
 
 class TestPostSaving extends TestCase {
 	public function testPostAuthorshipDoesNotGetSavedOnPostTypeThatDoesNotSupportAuthor() : void {
@@ -188,5 +189,183 @@ class TestPostSaving extends TestCase {
 		$this->assertSame( [ 999999 ], $failures[0]['author_ids'] );
 		$this->assertInstanceOf( \Exception::class, $failures[0]['exception'] );
 		$this->assertSame( 'One or more user IDs are not valid for this site.', $failures[0]['exception']->getMessage() );
+	}
+
+	public function testSetAuthorsBeforeHookFiresOnInsert() : void {
+		$fired = [];
+
+		$callback = function( \WP_Post $post, array $prev, array $requested, array $context ) use ( &$fired ) : void {
+			$fired[] = compact( 'post', 'prev', 'requested', 'context' );
+		};
+
+		add_action( 'authorship_set_authors_before', $callback, 10, 4 );
+
+		$post = self::factory()->post->create_and_get( [
+			'post_author' => self::$users['editor']->ID,
+			POSTS_PARAM   => [ self::$users['author']->ID ],
+		] );
+
+		remove_action( 'authorship_set_authors_before', $callback, 10 );
+
+		$this->assertGreaterThanOrEqual( 1, count( $fired ) );
+		$last = end( $fired );
+		$this->assertSame( $post->ID, $last['post']->ID );
+		$this->assertContains( self::$users['author']->ID, $last['requested'] );
+		$this->assertArrayHasKey( 'source', $last['context'] );
+		$this->assertArrayHasKey( 'operation', $last['context'] );
+		$this->assertArrayHasKey( 'actor_user_id', $last['context'] );
+	}
+
+	public function testSetAuthorsAfterHookFiresOnInsert() : void {
+		$fired = [];
+
+		$callback = function( \WP_Post $post, array $prev, array $new_ids, array $context ) use ( &$fired ) : void {
+			$fired[] = compact( 'post', 'prev', 'new_ids', 'context' );
+		};
+
+		add_action( 'authorship_set_authors_after', $callback, 10, 4 );
+
+		$post = self::factory()->post->create_and_get( [
+			'post_author' => self::$users['editor']->ID,
+			POSTS_PARAM   => [ self::$users['author']->ID ],
+		] );
+
+		remove_action( 'authorship_set_authors_after', $callback, 10 );
+
+		$this->assertGreaterThanOrEqual( 1, count( $fired ) );
+		$last = end( $fired );
+		$this->assertSame( $post->ID, $last['post']->ID );
+		$this->assertContains( self::$users['author']->ID, $last['new_ids'] );
+	}
+
+	public function testSetAuthorsBeforeHookFiresOnUpdate() : void {
+		$post = self::factory()->post->create_and_get( [
+			'post_author' => self::$users['editor']->ID,
+			POSTS_PARAM   => [ self::$users['editor']->ID ],
+		] );
+
+		$fired = [];
+
+		$callback = function( \WP_Post $p, array $prev, array $requested, array $context ) use ( &$fired ) : void {
+			$fired[] = compact( 'prev', 'requested', 'context' );
+		};
+
+		add_action( 'authorship_set_authors_before', $callback, 10, 4 );
+
+		wp_update_post( [
+			'ID'        => $post->ID,
+			POSTS_PARAM => [ self::$users['author']->ID ],
+		] );
+
+		remove_action( 'authorship_set_authors_before', $callback, 10 );
+
+		$this->assertGreaterThanOrEqual( 1, count( $fired ) );
+		$last = end( $fired );
+		$this->assertContains( self::$users['editor']->ID, $last['prev'] );
+		$this->assertContains( self::$users['author']->ID, $last['requested'] );
+	}
+
+	public function testSetAuthorsFailedHookFiresOnInvalidAuthorIds() : void {
+		$fired = [];
+
+		$callback = function( \WP_Post $post, array $prev, array $requested, \Exception $e, array $context ) use ( &$fired ) : void {
+			$fired[] = compact( 'post', 'prev', 'requested', 'e', 'context' );
+		};
+
+		add_action( 'authorship_set_authors_failed', $callback, 10, 5 );
+
+		$post = self::factory()->post->create_and_get( [
+			'post_author' => self::$users['admin']->ID,
+		] );
+
+		try {
+			set_authors( $post, [ 999999 ] );
+		} catch ( \Exception $e ) {
+			// Expected.
+		}
+
+		remove_action( 'authorship_set_authors_failed', $callback, 10 );
+
+		$this->assertCount( 1, $fired );
+		$this->assertSame( $post->ID, $fired[0]['post']->ID );
+		$this->assertSame( [ 999999 ], $fired[0]['requested'] );
+		$this->assertInstanceOf( \Exception::class, $fired[0]['e'] );
+		$this->assertArrayHasKey( 'source', $fired[0]['context'] );
+	}
+
+	public function testSetAuthorsAfterDoesNotFireOnFailure() : void {
+		$after_fired = false;
+
+		$callback = function() use ( &$after_fired ) : void {
+			$after_fired = true;
+		};
+
+		add_action( 'authorship_set_authors_after', $callback, 10, 4 );
+
+		$post = self::factory()->post->create_and_get( [
+			'post_author' => self::$users['admin']->ID,
+		] );
+
+		try {
+			set_authors( $post, [ 999999 ] );
+		} catch ( \Exception $e ) {
+			// Expected.
+		}
+
+		remove_action( 'authorship_set_authors_after', $callback, 10 );
+
+		$this->assertFalse( $after_fired );
+	}
+
+	public function testLegacyAuthorAssignmentFailureHookStillFires() : void {
+		$legacy_fired = [];
+		$new_fired    = [];
+
+		$legacy_cb = function( int $post_id ) use ( &$legacy_fired ) : void {
+			$legacy_fired[] = $post_id;
+		};
+
+		$new_cb = function( \WP_Post $post ) use ( &$new_fired ) : void {
+			$new_fired[] = $post->ID;
+		};
+
+		add_action( 'authorship_author_assignment_failure', $legacy_cb, 10, 1 );
+		add_action( 'authorship_set_authors_failed', $new_cb, 10, 1 );
+
+		wp_insert_post( [
+			'post_title'  => 'Legacy hook test',
+			'post_author' => self::$users['author']->ID,
+			POSTS_PARAM   => [ 999999 ],
+		], true );
+
+		remove_action( 'authorship_author_assignment_failure', $legacy_cb, 10 );
+		remove_action( 'authorship_set_authors_failed', $new_cb, 10 );
+
+		$this->assertCount( 1, $legacy_fired, 'Legacy hook should still fire' );
+		$this->assertCount( 1, $new_fired, 'New failed hook should also fire' );
+	}
+
+	public function testSetAuthorsContextIncludesSourceOnDirectCall() : void {
+		$context_captured = null;
+
+		$callback = function( \WP_Post $post, array $prev, array $new_ids, array $context ) use ( &$context_captured ) : void {
+			$context_captured = $context;
+		};
+
+		add_action( 'authorship_set_authors_after', $callback, 10, 4 );
+
+		$post = self::factory()->post->create_and_get( [
+			'post_author' => self::$users['admin']->ID,
+		] );
+
+		set_authors( $post, [ self::$users['editor']->ID ], [
+			'source'    => 'rest',
+			'operation' => 'replace',
+		] );
+
+		remove_action( 'authorship_set_authors_after', $callback, 10 );
+
+		$this->assertSame( 'rest', $context_captured['source'] );
+		$this->assertSame( 'replace', $context_captured['operation'] );
 	}
 }

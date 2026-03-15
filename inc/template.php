@@ -142,36 +142,79 @@ HTML;
 /**
  * Sets the attributed authors for the given post.
  *
- * @param WP_Post $post    The post object.
- * @param int[]   $authors Array of user IDs.
+ * @param WP_Post              $post    The post object.
+ * @param int[]                $authors Array of user IDs.
+ * @param array<string,mixed>  $context Normalized observability context.
  * @throws Exception If any of the users do not exist.
  * @return WP_User[] Array of user objects.
  */
-function set_authors( WP_Post $post, array $authors ) : array {
+function set_authors( WP_Post $post, array $authors, array $context = [] ) : array {
 	if ( ! is_post_type_supported( $post->post_type ) ) {
 		throw new Exception( __( 'This post type does not support authorship.', 'authorship' ) );
 	}
 
-	$authors = array_filter( array_map( 'intval', $authors ) );
+	$requested_author_ids = array_values( array_filter( array_map( 'intval', $authors ) ) );
+	$previous_author_ids  = get_author_ids( $post );
 
-	/** @var WP_User[] */
-	$users = get_users( [
-		// Check all sites.
-		'blog_id' => 0,
-		'include' => $authors,
-		'orderby' => 'include',
-	] );
+	$context = array_merge( [
+		'source'        => 'unknown',
+		'operation'     => 'assign',
+		'actor_user_id' => get_current_user_id(),
+	], $context );
 
-	if ( count( $users ) !== count( $authors ) ) {
-		throw new Exception( __( 'One or more user IDs are not valid for this site.', 'authorship' ) );
-	}
+	/**
+	 * Fires immediately before attempting to persist attribution changes.
+	 *
+	 * @param WP_Post $post                 The post object.
+	 * @param int[]   $previous_author_ids  Author IDs before this change.
+	 * @param int[]   $requested_author_ids Requested new author IDs.
+	 * @param array   $context              Normalized context array.
+	 */
+	do_action( 'authorship_set_authors_before', $post, $previous_author_ids, $requested_author_ids, $context );
 
-	// Author IDs must be mapped to strings before passing to `wp_set_post_terms()`.
-	$terms = wp_set_post_terms( $post->ID, array_map( 'strval', $authors ), TAXONOMY );
+	try {
+		/** @var WP_User[] */
+		$users = get_users( [
+			// Check all sites.
+			'blog_id' => 0,
+			'include' => $requested_author_ids,
+			'orderby' => 'include',
+		] );
 
-	if ( is_wp_error( $terms ) ) {
-		throw new Exception( $terms->get_error_message() );
-	}
+		if ( count( $users ) !== count( $requested_author_ids ) ) {
+			throw new Exception( __( 'One or more user IDs are not valid for this site.', 'authorship' ) );
+		}
+
+		// Author IDs must be mapped to strings before passing to `wp_set_post_terms()`.
+		$terms = wp_set_post_terms( $post->ID, array_map( 'strval', $requested_author_ids ), TAXONOMY );
+
+		if ( is_wp_error( $terms ) ) {
+			throw new Exception( $terms->get_error_message() );
+		}
+	} catch ( Exception $e ) {
+		/**
+		 * Fires when attribution persistence fails.
+		 *
+		 * @param WP_Post   $post                 The post object.
+		 * @param int[]     $previous_author_ids  Author IDs before this change.
+		 * @param int[]     $requested_author_ids Requested new author IDs.
+		 * @param Exception $exception            The exception that was thrown.
+		 * @param array     $context              Normalized context array.
+		 */
+		do_action( 'authorship_set_authors_failed', $post, $previous_author_ids, $requested_author_ids, $e, $context );
+
+		throw $e;
+	}//end try
+
+	/**
+	 * Fires after successful attribution persistence.
+	 *
+	 * @param WP_Post $post                The post object.
+	 * @param int[]   $previous_author_ids Author IDs before this change.
+	 * @param int[]   $new_author_ids      The new author IDs that were set.
+	 * @param array   $context             Normalized context array.
+	 */
+	do_action( 'authorship_set_authors_after', $post, $previous_author_ids, $requested_author_ids, $context );
 
 	return $users;
 }

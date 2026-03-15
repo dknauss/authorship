@@ -195,4 +195,130 @@ class TestUserDeletion extends TestCase {
 		$this->assertSame( [ self::$users['editor']->ID ], get_author_ids( $post ) );
 		$this->assertFalse( get_term_by( 'slug', (string) $deleted_user->ID, TAXONOMY ) );
 	}
+
+	public function testDeletedUserSyncUpdatedHookFiresPerUpdatedPost() : void {
+		$deleted_user = self::factory()->user->create_and_get( [
+			'role'         => 'author',
+			'display_name' => 'Hook Updated',
+			'user_email'   => 'hook-updated@example.org',
+		] );
+
+		$post = self::factory()->post->create_and_get( [
+			'post_author' => self::$users['admin']->ID,
+			POSTS_PARAM   => [
+				$deleted_user->ID,
+				self::$users['editor']->ID,
+			],
+		] );
+
+		$fired = [];
+
+		$callback = function( int $post_id, array $prev, array $updated, int $del_id, int $repl_id, array $ctx ) use ( &$fired ) : void {
+			$fired[] = compact( 'post_id', 'prev', 'updated', 'del_id', 'repl_id', 'ctx' );
+		};
+
+		add_action( 'authorship_deleted_user_sync_post_updated', $callback, 10, 6 );
+
+		action_deleted_user( $deleted_user->ID, self::$users['author']->ID, $deleted_user );
+
+		remove_action( 'authorship_deleted_user_sync_post_updated', $callback, 10 );
+
+		$this->assertCount( 1, $fired );
+		$this->assertSame( $post->ID, $fired[0]['post_id'] );
+		$this->assertContains( $deleted_user->ID, $fired[0]['prev'] );
+		$this->assertContains( self::$users['author']->ID, $fired[0]['updated'] );
+		$this->assertSame( $deleted_user->ID, $fired[0]['del_id'] );
+		$this->assertSame( self::$users['author']->ID, $fired[0]['repl_id'] );
+		$this->assertSame( 'deleted_user_sync', $fired[0]['ctx']['source'] );
+	}
+
+	public function testDeletedUserSyncCompletedHookFiresWithSummary() : void {
+		$deleted_user = self::factory()->user->create_and_get( [
+			'role'         => 'author',
+			'display_name' => 'Hook Completed',
+			'user_email'   => 'hook-completed@example.org',
+		] );
+
+		self::factory()->post->create_and_get( [
+			'post_author' => self::$users['admin']->ID,
+			POSTS_PARAM   => [
+				$deleted_user->ID,
+			],
+		] );
+
+		$summary = [];
+
+		$callback = function( int $del_id, int $repl_id, int $scanned, int $updated, int $failed, array $ctx ) use ( &$summary ) : void {
+			$summary[] = compact( 'del_id', 'repl_id', 'scanned', 'updated', 'failed', 'ctx' );
+		};
+
+		add_action( 'authorship_deleted_user_sync_completed', $callback, 10, 6 );
+
+		action_deleted_user( $deleted_user->ID, 0, $deleted_user );
+
+		remove_action( 'authorship_deleted_user_sync_completed', $callback, 10 );
+
+		$this->assertCount( 1, $summary );
+		$this->assertSame( $deleted_user->ID, $summary[0]['del_id'] );
+		$this->assertSame( 1, $summary[0]['scanned'] );
+		$this->assertSame( 1, $summary[0]['updated'] );
+		$this->assertSame( 0, $summary[0]['failed'] );
+		$this->assertSame( 'deleted_user_sync', $summary[0]['ctx']['source'] );
+	}
+
+	public function testDeletedUserSyncCompletedHookFiresEvenWithNoPosts() : void {
+		$deleted_user = self::factory()->user->create_and_get( [
+			'role'         => 'author',
+			'display_name' => 'Hook No Posts',
+			'user_email'   => 'hook-no-posts@example.org',
+		] );
+
+		$summary = [];
+
+		$callback = function( int $del_id, int $repl_id, int $scanned, int $updated, int $failed ) use ( &$summary ) : void {
+			$summary[] = compact( 'del_id', 'repl_id', 'scanned', 'updated', 'failed' );
+		};
+
+		add_action( 'authorship_deleted_user_sync_completed', $callback, 10, 5 );
+
+		action_deleted_user( $deleted_user->ID, 0, $deleted_user );
+
+		remove_action( 'authorship_deleted_user_sync_completed', $callback, 10 );
+
+		$this->assertCount( 1, $summary );
+		$this->assertSame( 0, $summary[0]['scanned'] );
+		$this->assertSame( 0, $summary[0]['updated'] );
+		$this->assertSame( 0, $summary[0]['failed'] );
+	}
+
+	public function testDeletedUserSyncUpdatedHookIncludesEmptyArrayWhenSoleAuthorRemoved() : void {
+		$deleted_user = self::factory()->user->create_and_get( [
+			'role'         => 'author',
+			'display_name' => 'Hook Sole Removed',
+			'user_email'   => 'hook-sole-removed@example.org',
+		] );
+
+		self::factory()->post->create_and_get( [
+			'post_author' => self::$users['admin']->ID,
+			POSTS_PARAM   => [
+				$deleted_user->ID,
+			],
+		] );
+
+		$fired = [];
+
+		$callback = function( int $post_id, array $prev, array $updated ) use ( &$fired ) : void {
+			$fired[] = compact( 'post_id', 'prev', 'updated' );
+		};
+
+		add_action( 'authorship_deleted_user_sync_post_updated', $callback, 10, 3 );
+
+		action_deleted_user( $deleted_user->ID, 0, $deleted_user );
+
+		remove_action( 'authorship_deleted_user_sync_post_updated', $callback, 10 );
+
+		$this->assertCount( 1, $fired );
+		$this->assertSame( [], $fired[0]['updated'] );
+		$this->assertContains( $deleted_user->ID, $fired[0]['prev'] );
+	}
 }

@@ -1,7 +1,7 @@
-# Authorship Observability Hook Contract (Draft)
+# Authorship Observability Hook Contract
 
-Last updated: 2026-03-08 (America/Edmonton)
-Status: backlog-ready specification (not yet implemented)
+Last updated: 2026-03-15 (America/Edmonton)
+Status: implemented (Build-08)
 Scope: hook interoperability for external audit plugins
 
 ## Purpose

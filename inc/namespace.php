@@ -420,6 +420,16 @@ function sync_deleted_user_authorship_for_current_site( int $deleted_user_id, in
 		],
 	] );
 
+	$posts_scanned = count( $post_ids );
+	$posts_updated = 0;
+	$posts_failed  = 0;
+
+	$sync_context = [
+		'source'        => 'deleted_user_sync',
+		'operation'     => 'replace',
+		'actor_user_id' => get_current_user_id(),
+	];
+
 	foreach ( $post_ids as $post_id ) {
 		$post = get_post( $post_id );
 
@@ -433,20 +443,20 @@ function sync_deleted_user_authorship_for_current_site( int $deleted_user_id, in
 			continue;
 		}
 
-		$author_ids = array_map(
+		$previous_author_ids = array_map(
 			static function( \WP_Term $term ) : int {
 				return (int) $term->slug;
 			},
 			$author_terms
 		);
 
-		if ( ! in_array( $deleted_user_id, $author_ids, true ) ) {
+		if ( ! in_array( $deleted_user_id, $previous_author_ids, true ) ) {
 			continue;
 		}
 
 		$updated_author_ids = [];
 
-		foreach ( $author_ids as $author_id ) {
+		foreach ( $previous_author_ids as $author_id ) {
 			if ( $author_id === $deleted_user_id ) {
 				$author_id = $replacement_user_id;
 			}
@@ -460,15 +470,59 @@ function sync_deleted_user_authorship_for_current_site( int $deleted_user_id, in
 
 		if ( empty( $updated_author_ids ) ) {
 			wp_set_post_terms( $post->ID, [], TAXONOMY );
+			++$posts_updated;
+
+			/**
+			 * Fires once per updated post during deleted-user sync.
+			 *
+			 * @param int   $post_id              Post ID.
+			 * @param int[] $previous_author_ids   Author IDs before sync.
+			 * @param int[] $updated_author_ids    Author IDs after sync.
+			 * @param int   $deleted_user_id       Deleted user ID.
+			 * @param int   $replacement_user_id   Replacement user ID (0 if none).
+			 * @param array $context               Normalized context array.
+			 */
+			do_action( 'authorship_deleted_user_sync_post_updated', $post->ID, $previous_author_ids, [], $deleted_user_id, $replacement_user_id, $sync_context );
 			continue;
 		}
 
 		$terms = wp_set_post_terms( $post->ID, array_map( 'strval', $updated_author_ids ), TAXONOMY );
 
 		if ( is_wp_error( $terms ) ) {
+			++$posts_failed;
+
+			/**
+			 * Fires when a post update fails during deleted-user sync.
+			 *
+			 * @param int      $post_id              Post ID.
+			 * @param int[]    $previous_author_ids   Author IDs before sync.
+			 * @param int[]    $attempted_author_ids  Author IDs that were attempted.
+			 * @param int      $deleted_user_id       Deleted user ID.
+			 * @param int      $replacement_user_id   Replacement user ID (0 if none).
+			 * @param \WP_Error $error                The error from wp_set_post_terms.
+			 * @param array    $context               Normalized context array.
+			 */
+			do_action( 'authorship_deleted_user_sync_post_failed', $post->ID, $previous_author_ids, $updated_author_ids, $deleted_user_id, $replacement_user_id, $terms, $sync_context );
 			continue;
 		}
+
+		++$posts_updated;
+
+		/** This action is documented above. */
+		do_action( 'authorship_deleted_user_sync_post_updated', $post->ID, $previous_author_ids, $updated_author_ids, $deleted_user_id, $replacement_user_id, $sync_context );
 	}//end foreach
+
+	/**
+	 * Fires once per sync run after traversal completes.
+	 *
+	 * @param int   $deleted_user_id     Deleted user ID.
+	 * @param int   $replacement_user_id Replacement user ID (0 if none).
+	 * @param int   $posts_scanned       Number of posts scanned.
+	 * @param int   $posts_updated       Number of posts updated.
+	 * @param int   $posts_failed        Number of posts that failed.
+	 * @param array $context             Normalized context array.
+	 */
+	do_action( 'authorship_deleted_user_sync_completed', $deleted_user_id, $replacement_user_id, $posts_scanned, $posts_updated, $posts_failed, $sync_context );
 
 	$term = get_term_by( 'slug', (string) $deleted_user_id, TAXONOMY );
 

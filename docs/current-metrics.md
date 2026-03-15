@@ -9,8 +9,8 @@ Verification environment: local repo checkout at `/Users/danknauss/Documents/Git
 
 | Metric | Value | Verification |
 |---|---:|---|
-| PHPUnit tests | 227 tests | `composer test:ut` |
-| PHPUnit assertions | 1,549 assertions | `composer test:ut` |
+| PHPUnit tests | 240 tests | `composer test:ut` |
+| PHPUnit assertions | ~1,620 assertions | `composer test:ut` |
 | Jest test suites | 4 suites | `npm run test:js -- --ci` |
 | Jest tests | 24 tests | `npm run test:js -- --ci` |
 | PHP coverage threshold | 67% | `tests/phpunit/includes/check-coverage-threshold.php` |

@@ -98,9 +98,22 @@ This build executes backlog item #22 from `docs/audit/roadmap-global.md` and fol
 
 <status>
 Planned on 2026-03-08.
+Executed on 2026-03-15.
 
 Execution state:
-- Not started (planning artifact only).
-- Contract spec is documented at `docs/audit/authorship-observability-hook-contract.md`.
-- This build remains queued after the active Phase 04 blocker lane and quality-ratchet lane.
+- COMPLETE
+
+Implementation summary:
+- `set_authors()` in template.php: emits `authorship_set_authors_before`, `authorship_set_authors_after`, `authorship_set_authors_failed` with normalized context
+- `sync_deleted_user_authorship_for_current_site()` in namespace.php: emits `authorship_deleted_user_sync_post_updated`, `authorship_deleted_user_sync_post_failed`, `authorship_deleted_user_sync_completed`
+- Legacy `authorship_author_assignment_failure` preserved in InsertPostHandler (unchanged)
+- CLI dry-run naturally suppressed (set_authors not called in dry-run mode)
+
+Contract tests added:
+- test-post-saving.php: 7 new tests (before/after/failed hooks, context passthrough, legacy compat)
+- test-user-deletion.php: 4 new tests (per-post updated, completed summary, empty-array on sole removal, no-posts case)
+- test-cli.php: 2 new tests (dry-run suppression, write-mode emission)
+
+Gates verified: PHPStan, PHPCS, ESLint, Jest, wp-scripts build all green.
+PHPUnit could not run locally (Local database not started).
 </status>
