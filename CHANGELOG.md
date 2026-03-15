@@ -17,10 +17,12 @@ Scope notes:
   - `hide_quickedit_authors` quick edit suppression
   - Guest author role registration and zero-capability enforcement
   - `create_guest_authors` and `attribute_post_type` capability mapping
-- Build-01 (multisite + hook/filter coverage) now complete: 222 PHP tests, 1540 assertions.
+- Build-01 (multisite + hook/filter coverage) now complete.
+- Guest author login blocking: `filter_authenticate_block_guest_authors()` in `inc/namespace.php` — returns `WP_Error` for pure guest-author accounts at priority 100, with 5 tests covering block, passthrough, null, error, and multi-role cases.
+- 227 PHP tests, 1549 assertions total.
 
 ### Fixed
-- **Doc correction:** Guest author login blocking (`authenticate` filter) was never implemented but was erroneously marked "Resolved — Phase 01 Build-02" in `known-gaps.md` and `architecture.md` since `f05a756`. The misattribution occurred because all three adjacent security items were annotated by proximity rather than code verification. Restored to open/recommended status with correction note.
+- **Doc correction:** Guest author login blocking (`authenticate` filter) was never implemented but was erroneously marked "Resolved — Phase 01 Build-02" in `known-gaps.md` and `architecture.md` since `f05a756`. The misattribution occurred because all three adjacent security items were annotated by proximity rather than code verification. Now actually implemented and documented.
 
 ## 2026-03-13
 

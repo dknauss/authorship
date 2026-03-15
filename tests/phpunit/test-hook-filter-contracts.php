@@ -25,6 +25,7 @@ use function Authorship\get_authors;
 use function Authorship\get_supported_post_types;
 use function Authorship\is_post_type_supported;
 use function Authorship\set_authors;
+use function Authorship\filter_authenticate_block_guest_authors;
 use function Authorship\filter_comment_moderation_recipients;
 use function Authorship\filter_comment_notification_recipients;
 use function Authorship\hide_quickedit_authors;
@@ -303,5 +304,65 @@ class TestHookFilterContracts extends TestCase {
 
 		// Non-existent post type.
 		$this->assertFalse( user_can( $editor_id, 'attribute_post_type', 'nonexistent_cpt' ) );
+	}
+
+	/**
+	 * Authenticate filter blocks guest-author-only users.
+	 */
+	public function testAuthenticateBlocksGuestAuthorLogin() : void {
+		$guest = self::$users[ GUEST_ROLE ];
+
+		$result = filter_authenticate_block_guest_authors( $guest );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'guest_author_login_blocked', $result->get_error_code() );
+	}
+
+	/**
+	 * Authenticate filter allows normal users through.
+	 */
+	public function testAuthenticateAllowsNormalUsers() : void {
+		$editor = self::$users['editor'];
+
+		$result = filter_authenticate_block_guest_authors( $editor );
+
+		$this->assertInstanceOf( WP_User::class, $result );
+		$this->assertSame( $editor->ID, $result->ID );
+	}
+
+	/**
+	 * Authenticate filter passes through null (no user yet).
+	 */
+	public function testAuthenticatePassesThroughNull() : void {
+		$result = filter_authenticate_block_guest_authors( null );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Authenticate filter passes through WP_Error from earlier filters.
+	 */
+	public function testAuthenticatePassesThroughError() : void {
+		$error = new \WP_Error( 'invalid_username', 'Bad credentials' );
+
+		$result = filter_authenticate_block_guest_authors( $error );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invalid_username', $result->get_error_code() );
+	}
+
+	/**
+	 * Authenticate filter allows a user who has guest-author as one of multiple roles.
+	 */
+	public function testAuthenticateAllowsMultiRoleUserWithGuestRole() : void {
+		$user = self::factory()->user->create_and_get( [
+			'role' => 'editor',
+		] );
+		$user->add_role( GUEST_ROLE );
+
+		$result = filter_authenticate_block_guest_authors( $user );
+
+		$this->assertInstanceOf( WP_User::class, $result );
+		$this->assertSame( $user->ID, $result->ID );
 	}
 }

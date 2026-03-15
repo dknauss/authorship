@@ -60,6 +60,7 @@ function bootstrap() : void {
 	add_filter( 'comment_moderation_recipients', __NAMESPACE__ . '\\filter_comment_moderation_recipients', 10, 2 );
 	add_filter( 'comment_notification_recipients', __NAMESPACE__ . '\\filter_comment_notification_recipients', 10, 2 );
 	add_filter( 'quick_edit_dropdown_authors_args', __NAMESPACE__ . '\\hide_quickedit_authors' );
+	add_filter( 'authenticate', __NAMESPACE__ . '\\filter_authenticate_block_guest_authors', 100 );
 }
 
 /**
@@ -311,6 +312,32 @@ function action_wp( WP $wp ) : void {
  */
 function register_roles_and_caps() : void {
 	add_role( GUEST_ROLE, __( 'Guest Author', 'authorship' ), [] );
+}
+
+/**
+ * Blocks authentication for users whose only role is guest-author.
+ *
+ * Defense-in-depth measure: guest authors have zero capabilities and
+ * unknowable passwords, but if an admin assigns an email address, the
+ * password-reset flow could theoretically grant credentials. This filter
+ * prevents login entirely for pure guest-author accounts.
+ *
+ * @param WP_User|WP_Error|null $user The authenticated user, error, or null.
+ * @return WP_User|WP_Error|null The user or an error if they are a guest author.
+ */
+function filter_authenticate_block_guest_authors( $user ) {
+	if (
+		$user instanceof WP_User
+		&& in_array( GUEST_ROLE, $user->roles, true )
+		&& count( $user->roles ) === 1
+	) {
+		return new WP_Error(
+			'guest_author_login_blocked',
+			__( 'Guest authors cannot log in.', 'authorship' )
+		);
+	}
+
+	return $user;
 }
 
 /**
