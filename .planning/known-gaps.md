@@ -9,9 +9,9 @@ This document supplements the Phase 01 audit (`docs/audit/HM_WPCS_audit.md`) wit
 ### Guest author login is not actively blocked
 
 **Severity:** Low (mitigated by design, but defense-in-depth gap)
-**Status:** Resolved — Phase 01 Build-02 (`a83e128`). Upstream PR B (`#163`).
+**Status:** Open — incorrectly marked as resolved in a prior doc reconciliation (see correction note below).
 
-Guest authors are `WP_User` rows with the `guest-author` role (zero capabilities). Upstream Authorship (v0.2.17) does not register an `authenticate` filter or `wp_login` action to prevent login. The defense relies on:
+Guest authors are `WP_User` rows with the `guest-author` role (zero capabilities). Neither upstream Authorship (v0.2.17) nor the fork registers an `authenticate` filter or `wp_login` action to prevent login. The defense relies on:
 
 - Passwords are random 24-character strings generated at creation time, never returned to any caller.
 - Email is set to empty string by default, preventing password reset.
@@ -19,7 +19,7 @@ Guest authors are `WP_User` rows with the `guest-author` role (zero capabilities
 
 **Risk scenario:** An Administrator creates a guest author with an email address. The guest author uses WordPress's password reset flow to obtain credentials. They log in with an empty-capability session. The session itself may have side effects with plugins that check `is_user_logged_in()` rather than specific capabilities.
 
-**Fork resolution:** An `authenticate` filter now returns `WP_Error` for users whose only role is `guest-author`:
+**Recommendation:** Add an `authenticate` filter that returns `WP_Error` for users whose only role is `guest-author`. This is a one-line defense-in-depth addition:
 
 ```php
 add_filter( 'authenticate', function( $user ) {
@@ -29,6 +29,8 @@ add_filter( 'authenticate', function( $user ) {
     return $user;
 }, 100, 1 );
 ```
+
+> **Correction (2026-03-15):** This item was erroneously marked "Resolved — Phase 01 Build-02 (`a83e128`)" during a doc reconciliation pass (`f05a756`). Build-02 resolved the two adjacent security items (username normalization and signup filter scope) but never implemented the authenticate filter. The misattribution occurred because all three findings were grouped under the same Build-02 scope reference, and the reconciliation annotated by proximity rather than code verification.
 
 ### Guest author username normalization
 

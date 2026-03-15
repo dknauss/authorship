@@ -78,7 +78,7 @@ When a guest author is created via the REST API (`authorship/v1/users`), the `pr
 - **Role:** always forced to `['guest-author']` regardless of request input.
 - **Username:** derived from the display name, sanitized to lowercase ASCII alphanumerics.
 
-**Security note (upstream baseline):** Upstream Authorship (v0.2.17) does **not** actively block login for the Guest Author role. There is no `authenticate` filter. The defense relies on the password being unknowable and the role having zero capabilities. If an Administrator creates a guest author with an email address, the password-reset flow could theoretically be used to obtain credentials. The resulting session would have no capabilities, but the session would exist. **Fork status:** Resolved in Phase 01 Build-02. See [Fork divergence](#fork-divergence-from-upstream-v0217) below.
+**Security note (upstream baseline):** Upstream Authorship (v0.2.17) does **not** actively block login for the Guest Author role. There is no `authenticate` filter. The defense relies on the password being unknowable and the role having zero capabilities. If an Administrator creates a guest author with an email address, the password-reset flow could theoretically be used to obtain credentials. The resulting session would have no capabilities, but the session would exist. **Fork status:** Open — not yet implemented. See `.planning/known-gaps.md` for the recommended `authenticate` filter.
 
 ### Query rewriting
 
@@ -164,7 +164,7 @@ The sections above describe the upstream architecture as audited from the `devel
 
 ### Security hardening (Phase 01, Build-02)
 
-- **Guest author login blocking.** An `authenticate` filter now returns `WP_Error` for users whose only role is `guest-author`. This closes the defense-in-depth gap described in the guest author section above. Source: `inc/namespace.php`.
+- **Guest author login blocking.** Not yet implemented. An `authenticate` filter is recommended but has not been added. See `.planning/known-gaps.md` for the defense-in-depth recommendation and correction note.
 - **Username normalization.** `create_item()` in `class-users-controller.php` now uses a dedicated `normalize_guest_username()` method that handles non-ASCII names by falling back to a `guest-` prefix with a unique suffix. A companion `get_unique_guest_username()` handles collision resolution.
 - **Signup validation filter cleanup.** The anonymous `wpmu_validate_user_signup` filter added during `create_item()` is now properly removed after use, matching the pattern in `get_items()`.
 
