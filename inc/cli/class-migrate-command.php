@@ -415,11 +415,12 @@ class Migrate_Command extends WP_CLI_Command {
 		 * We need to get the user for Authorship so check if a
 		 * user is already mapped in PPA.
 		 */
-		$ppa_user_id = get_term_meta( $ppa_author->term_id, 'user_id', true );
+		/** @var scalar|array<array-key,mixed>|null $linked_user_meta */
+		$linked_user_meta = get_term_meta( $ppa_author->term_id, 'user_id', true );
 
 		// Reuse mapped linked users only when the referenced user still exists.
-		if ( ! empty( $ppa_user_id ) && is_scalar( $ppa_user_id ) ) {
-			$mapped_user_id = (int) $ppa_user_id;
+		if ( is_scalar( $linked_user_meta ) && '' !== (string) $linked_user_meta ) {
+			$mapped_user_id = (int) $linked_user_meta;
 
 			if ( $mapped_user_id > 0 && get_userdata( $mapped_user_id ) ) {
 				return $mapped_user_id;
@@ -458,20 +459,21 @@ class Migrate_Command extends WP_CLI_Command {
 			'user_pass'     => wp_generate_password( 24 ),
 			'role'          => GUEST_ROLE,
 		];
-		$ppa_user_id = wp_insert_user( $args );
+		$inserted_user_id = wp_insert_user( $args );
 
 		// If this fails we want the debug data, so print out the
 		// arguments so we can reproduce later.
-		if ( is_wp_error( $ppa_user_id ) ) {
+		if ( ! is_int( $inserted_user_id ) ) {
 			WP_CLI::error(
 				sprintf(
 					'Could not create Authorship user with these arguments: %s',
-					$ppa_user_id->get_error_message()
+					$inserted_user_id->get_error_message()
 				)
 			);
 		}
 
-		return (int) $ppa_user_id;
+		/** @var int $inserted_user_id */
+		return $inserted_user_id;
 	}
 
 	/**

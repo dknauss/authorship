@@ -2,15 +2,15 @@
 
 This file is the single source of truth for current repository counts.
 
-Last verified: 2026-03-15
-Verification environment: local repo checkout at `/Users/danknauss/Documents/GitHub/authorship`
+Last verified: 2026-03-21
+Verification environment: local repo checkout at `/Users/danknauss/Developer/GitHub/authorship`
 
 ## Test Metrics
 
 | Metric | Value | Verification |
 |---|---:|---|
 | PHPUnit tests | 240 tests | `composer test:ut` |
-| PHPUnit assertions | ~1,620 assertions | `composer test:ut` |
+| PHPUnit assertions | 1,599 assertions | `composer test:ut` |
 | Jest test suites | 4 suites | `npm run test:js -- --ci` |
 | Jest tests | 24 tests | `npm run test:js -- --ci` |
 | PHP coverage threshold | 67% | `tests/phpunit/includes/check-coverage-threshold.php` |
@@ -22,7 +22,7 @@ Verification environment: local repo checkout at `/Users/danknauss/Documents/Git
 |---|---:|---|
 | Production PHP lines (`inc/` + `plugin.php`) | 2,849 | `find ./inc -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` + `wc -l plugin.php` |
 | Test PHP lines (`tests/phpunit/`) | 5,573 | `find ./tests/phpunit -type f -name "*.php" -print0 \| xargs -0 wc -l \| tail -1` |
-| JS/TS source lines (`src/`) | 766 | `find ./src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.scss" \) -print0 \| xargs -0 wc -l \| tail -1` |
+| JS/TS source lines (`src/`) | 811 | `find ./src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.scss" \) -print0 \| xargs -0 wc -l \| tail -1` |
 | JS test lines (`tests/js/`) | 799 | `find ./tests/js -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" \) -print0 \| xargs -0 wc -l \| tail -1` |
 | Test-to-production ratio (PHP) | 1.96:1 | `5573 / 2849` |
 
@@ -53,27 +53,30 @@ numbers MUST point to or be verified against this table.
 
 Source: `.github/workflows/`
 
-- PHP standards (stable): PHP 8.3, PHPCS + PHPStan — merge-blocking
-- PHP standards (latest): PHP 8.4, nightly — advisory
-- PHPUnit: WordPress 6.6 test suite, single-site + multisite
-- Jest: Node 20, `@wordpress/scripts` test runner
-- Build: `wp-scripts build` verification
+- PHP standards: PHP 7.4 and 8.4, PHPCS + PHPStan
+- PHPUnit: WordPress 6.6 on PHP 7.4-8.3, single-site + multisite
+- Coverage gate: WordPress 6.6 on PHP 8.3
+- JS workflow: Node 20 from `.nvmrc`, `npm run lint`, and `npm run build`
+- Nightly: WordPress nightly on PHP 7.4-8.3
 
 ## Verification Notes
 
-- LOC counts verified on `develop` on 2026-03-15.
-- `composer test:ut` passed on 2026-03-15: single-site 224 tests/1563 assertions, multisite 240 tests (4 pre-existing REST multisite failures).
-- `npm run test:js -- --ci` passed on 2026-03-15 (4 suites, 24 tests).
-- `composer analyse:phpstan` passed on 2026-03-15.
-- Psalm baseline reduced from 339 to 328 lines on 2026-03-15 (removed 5 UnnecessaryVarAnnotation + InvalidReturn entries).
-- Coverage: 70.15% statement coverage (gate: 67%).
+- LOC counts verified on `develop` on 2026-03-21.
+- `composer test:ut` passed on 2026-03-21: single-site 224 tests/1563 assertions, multisite 240 tests/1599 assertions.
+- `composer analyse:phpstan` passed on 2026-03-21.
+- `composer analyse:psalm` passed on 2026-03-21.
+- `composer test:coverage` passed on 2026-03-21.
+- `npm run test:js -- --ci` passed on 2026-03-21 (4 suites, 24 tests).
+- `npm run test:js:coverage` passed on 2026-03-21.
+- `npm run lint` and `npm run build` passed on 2026-03-21.
+- Coverage: 70.09% statement coverage (gate: 67%).
 
 ## Verification Script
 
 Run after any structural edit:
 
 ```bash
-cd /Users/danknauss/Documents/GitHub/authorship
+cd /Users/danknauss/Developer/GitHub/authorship
 
 echo "=== Production PHP ==="
 find ./inc -type f -name "*.php" -print0 | xargs -0 wc -l | tail -1

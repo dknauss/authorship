@@ -119,12 +119,6 @@
     <DocblockTypeContradiction>
       <code><![CDATA[is_object( $wp_object_cache )]]></code>
     </DocblockTypeContradiction>
-    <InvalidReturnStatement>
-      <code><![CDATA[$ppa_user_id]]></code>
-    </InvalidReturnStatement>
-    <InvalidReturnType>
-      <code><![CDATA[int]]></code>
-    </InvalidReturnType>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$args]]></code>
       <code><![CDATA[$assoc_args]]></code>

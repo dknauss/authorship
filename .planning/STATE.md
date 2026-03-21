@@ -5,7 +5,7 @@
 Phase: 04 (Test Depth and Ratcheting) — COMPLETE
 Build: 08 of 08 complete — all builds delivered
 Status: Phase complete, ready for next phase or milestone
-Last activity: 2026-03-15
+Last activity: 2026-03-21
 
 ## Project Reference
 
@@ -34,7 +34,7 @@ See: `README.md`, `.planning/README.md`
 
 - Fork-first workflow: `dknauss/authorship` `develop` is canonical. Upstream PRs minimized per `docs/fork-first-policy.md`.
 - **Byline-feed is a companion plugin**, not part of the fork. Fork provides public API (`get_authors()`, `get_author_ids()`, role constants); companion consumes through adapter pattern.
-- PHP 8.3 is the stable CI gate; PHP 8.4 is advisory/nightly.
+- CI currently runs PHPCS/PHPStan on PHP 7.4 and 8.4, PHPUnit on PHP 7.4-8.3, and coverage on PHP 8.3.
 - PHPStan level max with committed baseline.
 - Psalm advisory baseline (not blocking).
 - Coverage thresholds: PHP 67%, JS 80% lines/statements, 73% functions, 55% branches.
@@ -43,10 +43,10 @@ See: `README.md`, `.planning/README.md`
 
 ### Known Issues
 
-- 4 pre-existing REST multisite test failures in `TestRESTAPIUserEndpointMultisite` (403 permission errors). Not caused by Phase 04 changes.
+- Local verification on PHP 8.5 emits upstream WordPress/WP-CLI dependency deprecations; repo gates pass once a MySQL client and test database are available.
 
 ## Session Continuity
 
-Last session: 2026-03-15
-Stopped at: Phase 04 complete — all builds verified locally
-Current metrics: See `docs/current-metrics.md` (240 PHP tests, 24 JS tests, 2,849 prod PHP LOC, 70.15% coverage)
+Last session: 2026-03-21
+Stopped at: Repo cleanup complete — local PHP and JS verification refreshed, metrics/state docs reconciled
+Current metrics: See `docs/current-metrics.md` (240 PHP tests, 24 JS tests, 2,849 prod PHP LOC, 70.09% coverage)
