@@ -38,7 +38,10 @@ class TestRESTAPIUserEndpoint extends RESTAPITestCase {
 		$message = self::get_message( $response );
 
 		$this->assertSame( WP_Http::CREATED, $response->get_status(), $message );
-		$this->assertSame( [ GUEST_ROLE ], $data['roles'] );
+		$user = get_userdata( (int) $data['id'] );
+
+		$this->assertNotFalse( $user );
+		$this->assertSame( [ GUEST_ROLE ], $user->roles );
 	}
 
 	public function testGuestAuthorDuplicateNameGetsUniqueUsername() : void {
