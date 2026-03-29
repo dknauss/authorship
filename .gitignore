@@ -12,3 +12,6 @@
 /tests/.env
 /.phpunit.result.cache
 /.playwright-cli/
+
+# Local agent config
+CLAUDE.md
