@@ -109,9 +109,9 @@ Residual risk notes:
 - Coverage ratchet is intentionally conservative at 63% pending Phase 04 incremental raises.
 
 ## Next step
-- Continue Phase 04 only through explicit build-scoped branches/PRs; `04-Build-01` is the next slice.
-- Blocker-remediation lane is closed through `04-Build-07`; proceed with `04-Build-01`, then `04-Build-02`.
-- Keep `04-Build-08` queued as the next interoperability slice after blocker and quality lanes complete.
-- Keep explicit network mode scoped to REST in Phase 04; treat non-REST widening as backlog unless reprioritized.
-- Keep audit/reauth strategy integration-first: prioritize hook contract coverage for Stream/WSAL compatibility and avoid planning a first-party audit datastore in Authorship.
+- Phase 04 is complete fork-locally; the next queued phase is Phase 05 interoperability and compatibility hardening.
+- Start Phase 05 only through explicit build-scoped branches/PRs; `05-Build-01` is the next slice.
+- Execute `05-Build-01` first to define primary-author compatibility and `post_author` synchronization before any HTML metadata work.
+- Queue `05-Build-02` for structured author metadata in HTML and `05-Build-03` for compatibility guidance once the primary-author contract is verified.
+- Keep classic editor support, non-REST network-mode widening, and broader interoperability runbooks in backlog unless reprioritized.
 - Keep NVDA transcript capture in backlog as optional `UI-06` evidence work (non-blocking).

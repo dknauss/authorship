@@ -2,17 +2,17 @@
 
 ## Current Position
 
-Phase: 04 (Test Depth and Ratcheting) — COMPLETE
-Build: 08 of 08 complete — all builds delivered
-Status: Phase complete, ready for next phase or milestone
-Last activity: 2026-03-21
+Phase: 05 (Interoperability and Compatibility Hardening) — PLANNED
+Build: 01 of 03 queued — planning complete
+Status: Phase planned, ready for Build-01 execution
+Last activity: 2026-04-08
 
 ## Project Reference
 
 See: `README.md`, `.planning/README.md`
 
 **Core value:** Reliable multi-author and guest-author attribution for WordPress — every post can have multiple attributed authors, including guest authors backed by real user accounts.
-**Current focus:** Phase 04 complete. Next: plan Phase 05 or close milestone.
+**Current focus:** Phase 05 planned. Next: execute Build-01 for primary-author compatibility and `post_author` synchronization.
 
 ## Accumulated Context
 
@@ -40,13 +40,15 @@ See: `README.md`, `.planning/README.md`
 - Coverage thresholds: PHP 67%, JS 80% lines/statements, 73% functions, 55% branches.
 - `tests/wordpress/` contains a full WordPress install for integration testing — exclude from line counts.
 - React frontend uses `@dnd-kit` for drag-and-drop and `react-select` for user selection.
+- Phase 05 is a compatibility-first phase: resolve primary-author interoperability before adding HTML structured author metadata.
 
 ### Known Issues
 
 - Local verification on PHP 8.5 emits upstream WordPress/WP-CLI dependency deprecations; repo gates pass once a MySQL client and test database are available.
+- Canonical GSD roadmap files (`.planning/ROADMAP.md`, `.planning/REQUIREMENTS.md`) still do not exist; current phase planning continues from the fork-local audit roadmap and `.planning/` phase artifacts.
 
 ## Session Continuity
 
-Last session: 2026-03-21
-Stopped at: Repo cleanup complete — local PHP and JS verification refreshed, metrics/state docs reconciled
+Last session: 2026-04-08
+Stopped at: Phase 05 planned — compatibility hardening builds queued from fork-local backlog
 Current metrics: See `docs/current-metrics.md` (240 PHP tests, 24 JS tests, 2,849 prod PHP LOC, 70.09% coverage)

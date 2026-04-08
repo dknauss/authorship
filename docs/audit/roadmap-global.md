@@ -1,6 +1,6 @@
 # Authorship Global Roadmap
 
-Last updated: 2026-03-08 (America/Edmonton)
+Last updated: 2026-04-08 (America/Edmonton)
 
 ## Why this project exists
 
@@ -324,6 +324,35 @@ Clear the active correctness blockers found in the full-project review, then con
 
 ---
 
+## Phase 05: Interoperability and compatibility hardening (planned)
+
+### Goal
+Close the highest-value downstream compatibility gaps after Phase 04 by defining a stable primary-author contract, synchronizing `post_author` for legacy consumers, and providing a supported HTML structured-author metadata surface for implementors.
+
+### Scope
+- **Primary-author compatibility contract:** Decide and document how a primary author is selected for compatibility consumers when multiple authors are attributed.
+- **`post_author` synchronization:** Keep `post_author` aligned with the primary attributed author after successful authorship writes so themes, SEO plugins, and caches do not observe stale legacy state.
+- **Structured HTML author metadata:** Provide a defined Schema.org / JSON-LD-oriented output surface for HTML consumers.
+- **Implementation guidance:** Document the compatibility matrix for themes, template tags, SEO tooling, and caches.
+
+### Explicitly out of scope
+- Classic editor UI support
+- Feed/Byline companion work
+- Non-REST network-mode widening
+- First-party audit datastore/dashboard work
+
+### Planned build queue
+- `05-Build-01`: Primary-author contract + safe `post_author` synchronization
+- `05-Build-02`: Structured author metadata in HTML
+- `05-Build-03`: Compatibility matrix + implementation guidance
+
+### Phase entry rationale
+- `.planning/known-gaps.md` calls `post_author` divergence a real-world compatibility issue for themes, SEO plugins, and caches.
+- `.planning/known-gaps.md` also records the missing HTML Schema.org / JSON-LD author-markup gap.
+- Backlog items 24-25 remain the highest-value unassigned post-Phase-04 items that fit the fork's developer-oriented positioning.
+
+---
+
 ## Priority-triaged backlog
 
 Items are ordered by impact and urgency. Phase assignments indicate when each item is expected to be addressed.
@@ -404,10 +433,11 @@ Items are ordered by impact and urgency. Phase assignments indicate when each it
 - PHPStan state: baseline contains zero ignored errors.
 - Phase 02 status: completion criteria met on 2026-03-07 (fork-local).
 - Phase 03 status: complete fork-locally through Build-12; VoiceOver pass recorded and NVDA transcript capture moved to backlog.
-- Phase 04 status: started via groundwork commit `380ba2c`; Build-03 through Build-07 executed; Build-01 through Build-08 plans exist as the queued follow-on lane. The blocker-remediation lane is closed; next is Build-01/Build-02 quality ratchet, then Build-08 observability.
+- Phase 04 status: complete fork-locally through Build-08.
+- Phase 05 status: planned; next explicit slice is `05-Build-01` for primary-author compatibility and `post_author` synchronization.
 
 ## What happens next
 
 1. Keep open upstream PRs as optional adoption paths and post concise fork-status updates when execution state shifts.
-2. Continue Phase 04 only through explicit build-scoped branches/PRs, with `04-Build-01` now next, then `04-Build-02`, then `04-Build-08`.
+2. Start Phase 05 through explicit build-scoped branches/PRs, with `05-Build-01` first, then `05-Build-02`, then `05-Build-03`.
 3. Leave NVDA transcript capture as optional backlog evidence work (`UI-06`) and do not treat it as phase gating.

@@ -68,11 +68,12 @@ Fork development history is tracked in `CHANGELOG.md`.
 
 ## Current Status
 
-**Alpha** upstream product status. The fork has completed Phase 04 test-depth and ratcheting work and is ready for Phase 05 planning or milestone close:
+**Alpha** upstream product status. The fork has completed Phase 04 test-depth and ratcheting work and has now planned Phase 05 interoperability/compatibility hardening:
 
 * Phase 01 and Phase 02 are complete fork-locally.
 * Phase 03 Build-12 execution is complete fork-locally: VoiceOver add/remove/reorder pass is recorded; optional NVDA transcript capture is now tracked as backlog evidence (not a delivery gate).
 * Phase 04 is complete fork-locally across Builds 01-08: multisite coverage, hook/filter contracts, deterministic batching, PPA migration hardening, query semantics, user-deletion sync, coverage ratcheting, and attribution lifecycle observability hooks are all delivered.
+* Phase 05 is planned as the next execution lane: primary-author compatibility / `post_author` synchronization first, then HTML structured author metadata and implementation guidance.
 
 ## Features
 
