@@ -14,7 +14,7 @@ use WP_Term;
 /**
  * Registers the taxonomy that creates a connection between posts and users.
  */
-function init_taxonomy() : void {
+function init_taxonomy(): void {
 	$post_types = get_supported_post_types();
 
 	register_taxonomy(
@@ -90,7 +90,7 @@ function init_taxonomy() : void {
 		 * @param string[] $views An array of available list table views.
 		 * @return string[] An array of available list table views.
 		 */
-		add_filter( "views_edit-{$post_type}", function( array $views ) use ( $post_type, $text, $user_id ) : array {
+		add_filter( "views_edit-{$post_type}", function ( array $views ) use ( $post_type, $text, $user_id ): array {
 			if ( ! $text ) {
 				unset( $views['mine'] );
 

@@ -55,7 +55,7 @@ abstract class TestCase extends \WP_UnitTestCase {
 		}
 	}
 
-	public function setUp() : void {
+	public function setUp(): void {
 		parent::setUp();
 		$this->output_buffer_level = ob_get_level();
 		ob_start();
