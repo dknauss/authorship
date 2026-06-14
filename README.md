@@ -1,5 +1,5 @@
 # Authorship (Fork)
-[![License](https://img.shields.io/github/license/dknauss/authorship)](LICENSE) [![CI](https://github.com/dknauss/authorship/actions/workflows/test.yml/badge.svg)](https://github.com/dknauss/authorship/actions/workflows/test.yml) [![Latest Tag](https://img.shields.io/github/v/tag/dknauss/authorship)](https://github.com/dknauss/authorship/tags) [![Security Policy](https://img.shields.io/badge/security-policy-4c1)](SECURITY.md)
+[![License](https://img.shields.io/github/license/dknauss/authorship)](LICENSE) [![CI](https://github.com/dknauss/authorship/actions/workflows/test.yml/badge.svg)](https://github.com/dknauss/authorship/actions/workflows/test.yml) [![Latest Tag](https://img.shields.io/github/v/tag/dknauss/authorship)](https://github.com/dknauss/authorship/tags) [![Security Policy](https://img.shields.io/badge/security-policy-4c1)](SECURITY.md) [![Docs](https://img.shields.io/badge/docs-available-0a7ea4.svg)](docs/)
 
 
 A modern approach to author attribution in WordPress.
