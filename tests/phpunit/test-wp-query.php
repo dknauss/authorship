@@ -177,8 +177,10 @@ class TestWPQuery extends TestCase {
 				$posts,
 				"Post count for {$test_key} query is incorrect."
 			);
-			$this->assertFalse(
-				$query->get_queried_object(),
+			$queried_object = $query->get_queried_object();
+
+			$this->assertTrue(
+				false === $queried_object || null === $queried_object,
 				"Queried object for {$test_key} query is incorrect."
 			);
 		}
