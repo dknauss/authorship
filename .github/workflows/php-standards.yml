@@ -8,8 +8,6 @@ on:
     branches:
       - '**'
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   build:
@@ -42,7 +40,7 @@ jobs:
 
     - name: Cache PHP Dependencies
       id: composer-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ${{ steps.composer-cache-dir.outputs.DIR }}
         key: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ hashFiles('composer.lock') }}
@@ -52,7 +50,7 @@ jobs:
         composer install --prefer-dist --no-progress --no-interaction
 
     - name: PHPCS cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: tests/cache
         key: ${{ runner.os }}-phpcs-${{ matrix.php-version }}-${{ hashFiles('plugin.php') }}

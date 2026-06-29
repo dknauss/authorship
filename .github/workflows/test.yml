@@ -8,8 +8,6 @@ on:
     branches:
       - '**'
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   build:
@@ -50,7 +48,7 @@ jobs:
 
     - name: Cache PHP Dependencies
       id: composer-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ${{ steps.composer-cache-dir.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}-wp6.6
@@ -97,7 +95,7 @@ jobs:
 
     - name: Cache PHP Dependencies
       id: composer-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ${{ steps.composer-cache-dir.outputs.DIR }}
         key: ${{ runner.os }}-composer-coverage-8.3-${{ hashFiles('composer.lock') }}-wp6.6
@@ -107,7 +105,7 @@ jobs:
         composer install --prefer-dist --no-progress --no-suggest --no-interaction --ignore-platform-reqs
 
     - name: Coverage cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: tests/cache/coverage
         key: ${{ runner.os }}-coverage-8.3-${{ hashFiles('composer.lock', 'composer.json', 'phpunit.xml.dist') }}
