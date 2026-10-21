@@ -105,7 +105,7 @@ Structured feed output (Byline spec namespace, per-author refs, role mapping) wa
 
 ### WordPress version
 
-README declares `Tested up to: WordPress 7.2`, verified 2026-10-21 against WordPress 7.2 Beta 1: the PHPUnit suite passes single-site and multisite, and the authors field renders, searches, saves, and reloads in 7.2's DataForm post sidebar. The pull-request CI lanes still pin WordPress 6.6; a trunk lane runs on every pull request alongside the weekly nightly workflow.
+README declares `Tested up to: WordPress 6.6`; the bump to 7.2 waits for 7.2 RC. Verified 2026-10-21 against WordPress 7.2 Beta 1: the PHPUnit suite passes single-site and multisite, and the authors field renders, searches, saves, and reloads in 7.2's DataForm post sidebar. The pull-request CI lanes still pin WordPress 6.6; a trunk lane runs on every pull request alongside the weekly nightly workflow.
 
 ### PHP version
 
