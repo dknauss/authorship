@@ -15,7 +15,7 @@ This repository (`dknauss/authorship`) is the active fork of [humanmade/authorsh
 - Upstream PRs (`humanmade/authorship`): minimized and optional
 - Upstream (`humanmade/authorship`): original source, not actively maintained
 - Requires PHP: 7.2+ (upstream baseline; fork CI gates on 7.4–8.4)
-- Tested up to: WordPress 6.6
+- Tested up to: WordPress 7.2
 
 For canonical branch/release policy, see [docs/fork-first-policy.md](docs/fork-first-policy.md).
 

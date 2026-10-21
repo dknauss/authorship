@@ -6,6 +6,12 @@ Scope notes:
 - Baseline upstream branch: `humanmade/authorship` `develop`
 - This file tracks fork-local delivery history and coordination milestones.
 
+## Unreleased
+
+### Changed
+- README declares `Tested up to: WordPress 7.2` (was 6.6), verified against WordPress 7.2 Beta 1 (`7.2-beta1-64674`): PHPUnit passes single-site (224 tests) and multisite (240 tests), and the authors field renders, searches, saves, and reloads in 7.2's new DataForm post sidebar. Core's own Author field stays hidden there, because the REST `wp:action-assign-author` link is still removed.
+- Unit Tests workflow adds a WordPress nightly lane on PHP 8.3, so pull requests catch upcoming-release breakage without waiting for the weekly nightly run.
+
 ## 2026-03-15
 
 ### Added

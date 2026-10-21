@@ -105,7 +105,7 @@ Structured feed output (Byline spec namespace, per-author refs, role mapping) wa
 
 ### WordPress version
 
-Plugin header declares `Requires at least: 5.4`, tested up to 6.2. The 6.2 cap is stale — the plugin likely works with current WordPress but testing has not been updated.
+README declares `Tested up to: WordPress 7.2`, verified 2026-10-21 against WordPress 7.2 Beta 1: the PHPUnit suite passes single-site and multisite, and the authors field renders, searches, saves, and reloads in 7.2's DataForm post sidebar. The pull-request CI lanes still pin WordPress 6.6; a trunk lane runs on every pull request alongside the weekly nightly workflow.
 
 ### PHP version
 

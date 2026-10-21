@@ -54,10 +54,10 @@ numbers MUST point to or be verified against this table.
 Source: `.github/workflows/`
 
 - PHP standards: PHP 7.4 and 8.4, PHPCS + PHPStan
-- PHPUnit: WordPress 6.6 on PHP 7.4-8.3, single-site + multisite
+- PHPUnit: WordPress 6.6 on PHP 7.4-8.3, plus WordPress nightly on PHP 8.3, single-site + multisite
 - Coverage gate: WordPress 6.6 on PHP 8.3
 - JS workflow: Node 20 from `.nvmrc`, `npm run lint`, and `npm run build`
-- Nightly: WordPress nightly on PHP 7.4-8.3
+- Nightly (weekly schedule): WordPress nightly on PHP 7.4-8.3
 
 ## Verification Notes
 
