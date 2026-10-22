@@ -1,5 +1,7 @@
 # Documentation Index
 
+> **Cross-repo planning lives in one place:** [`author-identity/.planning/SUITE.md`](https://github.com/dknauss/author-identity/blob/main/.planning/SUITE.md). It records the release order across Authorship, Byline Feed, and the Byline spec, and how they depend on each other. This folder keeps Authorship's own phase plans and state.
+
 Technical documentation for the Authorship fork. These documents cover the upstream architecture, competitive landscape, planned enhancements, and audit findings.
 
 ## Architecture and internals

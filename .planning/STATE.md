@@ -9,6 +9,8 @@ Last activity: 2026-04-08
 
 ## Project Reference
 
+Cross-repo release order and dependencies: [`author-identity/.planning/SUITE.md`](https://github.com/dknauss/author-identity/blob/main/.planning/SUITE.md) (single source of truth).
+
 See: `README.md`, `.planning/README.md`
 
 **Core value:** Reliable multi-author and guest-author attribution for WordPress — every post can have multiple attributed authors, including guest authors backed by real user accounts.
